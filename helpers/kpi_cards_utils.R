@@ -44,9 +44,7 @@
 build_kpi <- function(label, value, tooltip = NULL) {
   stopifnot(is.character(label), !is.null(value))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[KPI] Building KPI entry: {label}"))
-  }
+  log_msg(glue::glue("[KPI] Building KPI entry: {label}"))
   
   list(label = label, value = value, tooltip = tooltip)
 }
@@ -127,9 +125,7 @@ render_kpi_card <- function(
     styles = NULL,
     height = "130px"
 ) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[KPI] Rendering KPI card: {title}"))
-  }
+  log_msg(glue::glue("[KPI] Rendering KPI card: {title}"))
   
   stopifnot(is.character(title), is.list(kpi_list) || is.null(kpi_list))
   
@@ -211,9 +207,8 @@ render_kpi_card <- function(
 safe_kpi_card <- function(
     kpis, body_fn, title, icon = NULL, tooltip = NULL, styles = NULL
 ) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[KPI] Building safe card for: {title}"))
-  }
+  
+  log_msg(glue::glue("[KPI] Building safe card for: {title}"))
   
   if (is.null(kpis)) {
     return(render_kpi_card(
@@ -278,13 +273,13 @@ format_kpi_value <- function(
     type, c("dollar", "percent", "number", "float", "country")
   )
   
-  # Return blank for NA or non-numeric input
+  # Return "NA" for NA or non-numeric input
   if (type != "country" && (!is.numeric(value) || all(is.na(value)))) {
-    return(rep("", length(value)))
+    return(rep("NA", length(value)))
   }
   
-  # Format only non-NA values
-  formatted <- rep("", length(value))
+  # Format only non-NA values (list NA as "NA")
+  formatted <- rep("NA", length(value))
   non_na_idx <- which(!is.na(value))
   
   switch(type,

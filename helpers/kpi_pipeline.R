@@ -68,9 +68,7 @@ get_shared_kpis <- function(con,
                             offsets = c(3, 6, 9)) {
   stopifnot(DBI::dbIsValid(con), is.character(tbl), length(tbl) == 1)
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[KPI] ▶ Starting shared KPI aggregation")
-  }
+  log_msg("[KPI] ▶ Starting shared KPI aggregation")
   
   revenue_kpis <- get_revenue_kpis(con, tbl, date_range)
   if (is.null(revenue_kpis))
@@ -86,15 +84,11 @@ get_shared_kpis <- function(con,
   
   metadata_kpis <- get_subset_metadata_kpis(con, tbl)
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("   ✔ Retrieved core KPI blocks")
-  }
+  log_msg("   ✔ Retrieved core KPI blocks")
   
   groupings <- c("Genre", "Artist", "BillingCountry")
   topn_by_group <- purrr::map(groupings, function(group) {
-    if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-      message(glue::glue("   ⏳ Generating top-N tables for {group}"))
-    }
+    log_msg(glue::glue("   ⏳ Generating top-N tables for {group}"))
     
     # Build full KPI table
     full_kpis <- topn_kpis_build_full_table(
@@ -133,9 +127,7 @@ get_shared_kpis <- function(con,
   })
   names(topn_by_group) <- paste0("topn_", tolower(groupings))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("   ✔ Retrieved Top-N KPI blocks")
-  }
+  log_msg("   ✔ Retrieved Top-N KPI blocks")
   
   retention_kpis <- get_retention_kpis(
     con = con,
@@ -145,9 +137,7 @@ get_shared_kpis <- function(con,
     offsets = offsets
   )
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("   ✔ Shared KPI pipeline complete")
-  }
+  log_msg("   ✔ Shared KPI pipeline complete")
   
   return(
     list(

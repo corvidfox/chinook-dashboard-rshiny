@@ -20,9 +20,7 @@ topn_kpis_build_full_table <- function(con, group_var, tbl, date_range = NULL) {
     group_var, c("Genre", "Artist", "BillingCountry")
   )
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[topn_kpis] Building full KPI table for {group_var}"))
-  }
+  log_msg(glue::glue("[topn_kpis] Building full KPI table for {group_var}"))
   
   df <- get_group_kpis_full(
     con = con,
@@ -56,9 +54,7 @@ topn_kpis_slice_topn <- function(df, metric_var, n = 5) {
 #' @return A named list of top-N tables keyed by metric
 #' @export
 topn_kpis_generate <- function(df_full, metrics, n = 5) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[topn_kpis] Slicing top {n} groups by metrics"))
-  }
+  log_msg(glue::glue("[topn_kpis] Slicing top {n} groups by metrics"))
   
   tables <- purrr::map(
     metrics,

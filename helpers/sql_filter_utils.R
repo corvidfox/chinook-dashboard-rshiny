@@ -37,9 +37,7 @@ form_where_clause <- function(
 ) {
   stopifnot(!is.null(.con), DBI::dbIsValid(.con))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] Running form_where_clause() with active filters")
-  }
+  log_msg("[SQL] Running form_where_clause() with active filters")
   
   clauses <- list()
   

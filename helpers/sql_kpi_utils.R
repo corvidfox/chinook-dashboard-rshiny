@@ -37,9 +37,7 @@ get_events_shared <- function(con, where_clause) {
     stop("`where_clause` must be a DBI::SQL object.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] Running get_events_shared() with active filters")
-  }
+  log_msg("[SQL] Running get_events_shared() with active filters")
   
   query <- glue::glue_sql(
     "
@@ -262,11 +260,9 @@ get_group_kpis_full <- function(con, tbl, group_var, date_range = NULL) {
     group_var, c("Genre", "Artist", "BillingCountry")
     )
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue(
+  log_msg(glue::glue(
       "[SQL] get_group_kpis_full(): querying full KPIs by {group_var}"
     ))
-  }
   
   # Define joins and expressions for group_var
   group_fields <- switch(
@@ -364,9 +360,7 @@ get_retention_cohort_data <- function(con,
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] get_retention_cohort_data(): querying cohort heatmap data.")
-  }
+  log_msg("[SQL] get_retention_cohort_data(): querying cohort heatmap data.")
   
   if (is.null(max_offset)) {
     date_bounds <- DBI::dbGetQuery(
@@ -471,9 +465,7 @@ get_retention_kpis <- function(con,
                                offsets = c(3, 6, 9)) {
   stopifnot(!is.null(con), DBI::dbIsValid(con))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] get_retention_kpis(): querying customer retention KPIs.")
-  }
+  log_msg("[SQL] get_retention_kpis(): querying customer retention KPIs.")
   
   if (is.null(date_range)) {
     date_bounds <- DBI::dbGetQuery(
@@ -577,9 +569,7 @@ get_retention_kpis <- function(con,
   if (nrow(cust_df) == 0)
     return(NULL)
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("Loaded {nrow(cust_df)} customers with in-window data"))
-  }
+  log_msg(glue::glue("Loaded {nrow(cust_df)} customers with in-window data"))
   
   # Derived metrics in R
   cust_df <- cust_df |>
@@ -726,9 +716,8 @@ get_retention_kpis <- function(con,
   
   kpis <- append(kpis, top_cohorts)
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] get_retention_kpis(): Retention KPI aggregation complete.")
-  }
+  log_msg("[SQL] get_retention_kpis(): Retention KPI aggregation complete.")
+  
   return(kpis)
   
 }

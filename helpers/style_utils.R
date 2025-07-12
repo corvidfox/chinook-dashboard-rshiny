@@ -71,9 +71,7 @@ theme_dark <- bslib::bs_theme(
 #' @return A named list of theme-based style parameters
 #' @keywords internal
 generate_styles <- function(theme_mode = "light") {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[STYLER] Generating styles for {theme_mode} mode"))
-  }
+  log_msg(glue::glue("[STYLER] Generating styles for {theme_mode} mode"))
   
   current_theme <- if (identical(theme_mode, "dark")) theme_dark else theme_light
   
@@ -118,7 +116,14 @@ generate_styles <- function(theme_mode = "light") {
       )
     ),
     kpi_bg            = sec_bg_color,
-    secondary_color   = secondary_color
+    secondary_color   = secondary_color,
+    spinner = list (
+      type = 3,
+      color = primary_color,
+      color_background = bg_color,
+      size  = 1,
+      caption = "Loading..."
+      )
   )
 }
 
@@ -138,9 +143,8 @@ generate_styles <- function(theme_mode = "light") {
 #' @return A character string of theme-bound CSS rules
 #' @keywords internal
 generate_css <- function(theme) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[STYLER] Generating dynamic CSS.")
-  }
+  
+  log_msg("[STYLER] Generating dynamic CSS.")
   
   theme_vars <- bslib::bs_get_variables(
     theme,
@@ -196,9 +200,7 @@ generate_css <- function(theme) {
 style_ggplot2 <- function(ggplot_plot, styles, axes_labs = NULL) {
   stopifnot(inherits(ggplot_plot, "ggplot"))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[STYLER] Styling ggplot2")
-  }
+  log_msg("[STYLER] Styling ggplot2")
   
   s <- styles
   
@@ -247,9 +249,7 @@ style_ggplot2 <- function(ggplot_plot, styles, axes_labs = NULL) {
 style_plotly <- function(plotly_plot, styles, type = "default", axes_labs = NULL) {
   stopifnot(inherits(plotly_plot, "plotly"))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[STYLER] Styling plotly")
-  }
+  log_msg("[STYLER] Styling plotly")
   
   s <- styles
   is_geo <- identical(type, "geo")

@@ -35,9 +35,7 @@
 get_filter_meta <- function(con) {
   stopifnot(!is.null(con), DBI::dbIsValid(con))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[DATA META] Fetching filter metadata from DuckDB.")
-  }
+  log_msg("[DATA META] Fetching filter metadata from DuckDB.")
   
   list(
     date_range = DBI::dbGetQuery(
@@ -70,9 +68,7 @@ get_filter_meta <- function(con) {
 #' @return A compact `DT::datatable()` widget with KPI values.
 #' @keywords internal
 make_static_summary_table <- function(kpis, filter_meta) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[DATA META] Generating static summary DT table.")
-  }
+  log_msg("[DATA META] Generating static summary DT table.")
   
   if (is.null(kpis)) {
     return(DT::datatable(
@@ -147,9 +143,7 @@ make_static_summary_table <- function(kpis, filter_meta) {
 create_catalog_tables <- function(con) {
   stopifnot(!is.null(con), DBI::dbIsValid(con))
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[DATA META] Creating catalog tables in DuckDB.")
-  }
+  log_msg("[DATA META] Creating catalog tables in DuckDB.")
   
   # Drop temp tables if they already exist
   DBI::dbExecute(con, "DROP TABLE IF EXISTS genre_catalog")
@@ -192,16 +186,14 @@ check_catalog_tables <- function(con) {
   expected <- c("genre_catalog", "artist_catalog")
   missing <- setdiff(expected, tables)
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    if (length(missing) > 0) {
-      message(
-        "[DATA META] ❌ Missing catalog tables: ", 
-        paste(missing, collapse = ", ")
-        )
-    } else {
-      message("[DATA META] ✅ Catalog tables present.")
-    }
-  }
-  
-  length(missing) == 0
+  log_msg(
+    cond = length(missing) > 0,
+    msg = paste0(
+      "[DATA META] ❌ Missing catalog tables: ", 
+      paste(missing, collapse = ", ")
+    )
+  )
+  log_msg(
+    cond = length(missing) == 0,
+    msg = "[DATA META] ✅ Catalog tables present.")
 }
