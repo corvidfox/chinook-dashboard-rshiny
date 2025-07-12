@@ -38,6 +38,27 @@ library(ggplot2)
 
 library(cachem)
 
+# ---- Logging ----
+enable_logging <- Sys.getenv("SHINY_ENV") != "production"
+
+# ---- Cache with Size Cap ----
+options(shiny.reactlog = enable_logging)
+# 50 MB
+shared_cache <- cachem::cache_mem(max_size = 50 * 1024^2)
+shiny::shinyOptions(cache = shared_cache)
+
+# ---- Connect to Chinook DuckDB Database ----
+# Uses embedded DuckDB; requires relative path resolution
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
+
+# Close DB connection when app stops
+shiny::onStop(function() {
+  try({
+    DBI::dbDisconnect(con, shutdown = TRUE)
+    message("Database connection closed.")
+  })
+})
+
 # ---- Load and Validate Helper Functions from /helpers ----
 helper_files <- list.files("helpers", full.names = TRUE)
 
@@ -66,27 +87,6 @@ for (f in module_files) {
     message(sprintf("❌ Error in %s:\n  %s", f, e$message))
   })
 }
-
-# ---- Logging ----
-enable_logging <- Sys.getenv("SHINY_ENV") != "production"
-
-# ---- Cache with Size Cap ----
-options(shiny.reactlog = enable_logging)
-# 50 MB
-shared_cache <- cachem::cache_mem(max_size = 50 * 1024^2)
-shiny::shinyOptions(cache = shared_cache)
-
-# ---- Connect to Chinook DuckDB Database ----
-# Uses embedded DuckDB; requires relative path resolution
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
-
-# Close DB connection when app stops
-shiny::onStop(function() {
-  try({
-    DBI::dbDisconnect(con, shutdown = TRUE)
-    message("Database connection closed.")
-  })
-})
 
 # ---- Prepare Global Filter Values ----
 ## Pull from DB Meta Values
