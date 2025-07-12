@@ -16,6 +16,7 @@
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
+library(shinycssloaders)
 library(bslib)
 library(bsicons)
 library(bsplus)
@@ -33,6 +34,8 @@ library(countrycode)
 
 library(plotly)
 library(ggplot2)
+
+library(cachem)
 
 # ---- Load and Validate Helper Functions from /helpers ----
 helper_files <- list.files("helpers", full.names = TRUE)
@@ -63,8 +66,13 @@ for (f in module_files) {
   })
 }
 
-# ---- Logging ---
+# ---- Logging ----
 enable_logging <- Sys.getenv("SHINY_ENV") != "production"
+
+# ---- Cache Size Cap ----
+options(shiny.reactlog = enable_logging)
+# 50 MB
+shiny::shinyOptions(cache = cachem::cache_mem(max_size = 50 * 1024^2))
 
 # ---- Connect to Chinook DuckDB Database ----
 # Uses embedded DuckDB; requires relative path resolution
