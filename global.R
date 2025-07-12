@@ -49,8 +49,8 @@ for (f in helper_files) {
 # ---- Load and Validate UI and Server Modules from /modules ----
 module_files <- list.files(
   path = "modules",
-  pattern = "\\.R$", 
-  full.names = TRUE, 
+  pattern = "\\.R$",
+  full.names = TRUE,
   recursive = TRUE
 )
 
@@ -68,7 +68,7 @@ enable_logging <- Sys.getenv("SHINY_ENV") != "production"
 
 # ---- Connect to Chinook DuckDB Database ----
 # Uses embedded DuckDB; requires relative path resolution
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "../../data/chinook.duckdb", read_only = TRUE)
+con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
 
 # Close DB connection when app stops
 shiny::onStop(function() {

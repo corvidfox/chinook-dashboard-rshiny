@@ -8,7 +8,6 @@
 #' This file includes:
 #' \itemize{
 #'   \item{\code{\link{get_group_metrics}}: SQL query for genre-level KPI data.}
-#'   \item{\code{\link{format_group_kpi_display}}: Prettifies shared KPIs for UI cards.}
 #'   \item{\code{\link{group_plotter}}: Builds styled Plotly stacked bar plots.}
 #' }
 #'
@@ -20,7 +19,7 @@
 #' 
 #' @note All functions assume prior setup of a DuckDB temporary table named
 #' \code{filtered_invoices}. That table should be pre-filtered for genre,
-#' artist, and country before calling the time series helpers.
+#' artist, and country before calling the module helpers.
 #'
 #' @keywords internal helper group-performance module dashboard reactive SQL
 
@@ -137,36 +136,6 @@ get_group_yearly_summary <- function(con, group_var = "Genre", date_range) {
     dplyr::rename_at("group_val", ~tolower(group_var))
 }
 
-#' Retrieve Top-N KPI Table by Group and Metric
-#'
-#' Extracts a specific Top-N KPI named list from a kpis_shared object, 
-#' given the grouping (e.g., "Genre", "Artist")
-#'
-#' @param kpis_shared A list from `get_shared_kpis()`
-#' @param group_var Either "Genre" or "Artist"
-#'
-#' @return A Top-N named list, or NULL if not found or empty.
-#' @keywords internal
-format_group_kpi_display <- function(kpis_shared, group_var) {
-  if (is.null(kpis_shared) || !is.list(kpis_shared$topn)) return(NULL)
-  
-  group_key <- paste0("topn_", tolower(group_var))
-  
-  if (!group_key %in% names(kpis_shared$topn)) return(NULL)
-  group_list <- kpis_shared$topn[[group_key]]
-  
-  group_list <- append(
-    group_list, 
-    list(
-      num_group_cats = kpis_shared$metadata_kpis[[
-        glue::glue("num_{tolower(group_var)}s")
-        ]]
-    )
-  )
-  
-  return(group_list)
-}
-
 #' @title Stacked Bar Chart for Group Performance Metrics
 #' @description
 #' Generates a stacked bar chart of yearly performance metrics 
@@ -197,6 +166,10 @@ group_plotter <- function(df, metric, group_var, group_label, styles, max_n){
       plotly::plotly_empty(type = "scatter", mode = "markers") %>% 
         plotly::layout(title = "No data available for selected filters")
     )
+  }
+  
+  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
+    message(glue::glue("[GROUP] group_plotter(): building stacked bar plot for {group_var}"))
   }
   
   # Format year as factor so it orders correctly (earliest year on bottom)

@@ -52,16 +52,23 @@ retention_ui <- function(id) {
           br(),
           plotly::plotlyOutput(ns("decay_curve_plot")),
           br(),
-          render_data_card(ns = ns),
+          render_data_card(
+            ns = ns, 
+            table_id = "decay_table", 
+            download_ui_id = "decay_download_ui"
+            ),
           br()
         ),
         bslib::nav_panel(
           "Cohort Retention Heatmap",
-          "Retention Decay Curve", 
           br(),
           plotly::plotlyOutput(ns("cohort_heatmap_plot")),
           br(),
-          render_data_card(ns = ns),
+          render_data_card(
+            ns = ns,
+            table_id = "cohort_table",
+            download_ui_id = "cohort_download_ui"
+            ),
           br()
           )
         )

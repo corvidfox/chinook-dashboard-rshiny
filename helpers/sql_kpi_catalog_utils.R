@@ -1,4 +1,4 @@
-#' @file catalog_kpis.R
+#' @file sql_kpi_catalog_utils.R
 #' @title Catalog KPI Utilities for Enrichment and Coverage Metrics
 #'
 #' @description
@@ -9,32 +9,6 @@
 #' countries). Built for DuckDB and used downstream in visual modules.
 #'
 #' @keywords internal
-
-#' Count unique genres, artists, and countries in subset
-#'
-#' @param con DBI connection
-#' @param tbl Name of filtered invoice temp table
-#'
-#' @return Named list of counts for genres, artists, countries
-get_subset_metadata_kpis <- function(con, tbl) {
-  stopifnot(!is.null(con), DBI::dbIsValid(con))
-  
-  query <- glue::glue_sql("
-    SELECT
-      COUNT(DISTINCT g.Name) AS num_genres,
-      COUNT(DISTINCT ar.Name) AS num_artists,
-      COUNT(DISTINCT i.BillingCountry) AS num_countries
-    FROM {`tbl`} e
-    JOIN Invoice i ON i.InvoiceId = e.InvoiceId
-    JOIN InvoiceLine il ON il.InvoiceId = e.InvoiceId
-    JOIN Track t ON il.TrackId = t.TrackId
-    JOIN Genre g ON t.GenreId = g.GenreId
-    JOIN Album al ON t.AlbumId = al.AlbumId
-    JOIN Artist ar ON al.ArtistId = ar.ArtistId
-  ", .con = con)
-  
-  DBI::dbGetQuery(con, query) |> as.list()
-}
 
 #' Query percent of catalog sold for Genre or Artist
 #'

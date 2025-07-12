@@ -38,6 +38,7 @@ geo_server <- function(
     styles
 ) {
   shiny::moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     
     geo_yearly <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
@@ -65,7 +66,8 @@ geo_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      format_geo_kpi_display(kpis_shared())
+      kpis_shared()$topn$topn_billingcountry
+      #format_geo_kpi_display(kpis_shared())
     })
     
     # --- KPI Card Outputs ---
@@ -89,7 +91,7 @@ geo_server <- function(
             ),
             build_kpi(
               label = "Total Countries", 
-              value = geo_kpis()$num_countries, 
+              value = geo_kpis()$num_vals, 
               tooltip = "Number of countries with available data."
             )
           )
@@ -139,7 +141,7 @@ geo_server <- function(
               label = "Customers",  
               value = build_kpi_list_html(
                 labels = k$num_customers_fmt,
-                values = k$revenue_per_cust_fmt,
+                values = k$avg_revenue_per_cust_fmt,
                 ordered = TRUE
               ),
               tooltip = paste0(
@@ -189,11 +191,7 @@ geo_server <- function(
       )
       render_scrollable_table(df)
     })
-    
-    output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", geo_yearly())
-    })
-    
+
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
       filename = function() paste0("chinook_geo_", Sys.Date(), ".csv"),
@@ -202,7 +200,7 @@ geo_server <- function(
     
     # Only Render the Download Button if Data Exists
     output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", geo_yearly())
+      render_conditional_download_button(ns, "download_csv", geo_yearly())
     })
   })
 }

@@ -44,6 +44,7 @@ group_server <- function(
     max_n = 15
 ) {
   shiny::moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     
     group_df <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
@@ -60,10 +61,7 @@ group_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      format_group_kpi_display(
-        kpis_shared = kpis_shared(),
-        group_var = group_var
-        )
+      kpis_shared()$topn[[glue::glue("topn_{tolower(group_var)}")]]
     })
     
     # --- KPI Card Outputs ---
@@ -87,7 +85,7 @@ group_server <- function(
             ),
             build_kpi(
               label = glue::glue("Total {group_label}"),
-              value = group_kpis()$num_group_cats,
+              value = group_kpis()$num_vals,
               tooltip = glue::glue("Number of {group_label} with available data.")
             )
           )
@@ -184,20 +182,16 @@ group_server <- function(
       )
       render_scrollable_table(df)
     })
-    
-    output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", group_df())
-    })
-    
+
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <-shiny::downloadHandler(
-      filename = function() glue::glue("chinook_{group_var}_{Sys.Date()}.csv"),
+      filename = function() glue::glue("chinook_{tolower(group_var)}_{Sys.Date()}.csv"),
       content = function(file) write.csv(group_df(), file, row.names = FALSE)
     )
     
     # Only Render the Download Button if Data Exists
     output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", group_df())
+      render_conditional_download_button(ns, "download_csv", group_df())
     })
   })
 }

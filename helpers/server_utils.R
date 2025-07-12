@@ -66,9 +66,9 @@ render_scrollable_table <- function(df) {
 #' @return downloadButton or NULL.
 #' @export
 render_conditional_download_button <- function(
-    output_id, df, label = "Download CSV", class = "download-btn"
+    ns, output_id, df, label = "Download CSV", class = "download-btn"
 ) {
   if (nrow(df) == 0 || all(is.na(df))) return(NULL)
   
-  shiny::downloadButton(outputId = output_id, label = label, class = class)
+  shiny::downloadButton(outputId = ns(output_id), label = label, class = class)
 }

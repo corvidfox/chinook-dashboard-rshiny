@@ -38,6 +38,7 @@ ts_server <- function(
     styles
 ) {
   shiny::moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     
     ts_df <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
@@ -157,19 +158,25 @@ ts_server <- function(
       render_scrollable_table(df)
     })
     
-    output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", ts_df())
-    })
-    
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
       filename = function() paste0("chinook_ts_", Sys.Date(), ".csv"),
       content = function(file) write.csv(ts_df(), file, row.names = FALSE)
     )
+    shiny::outputOptions(output, "download_csv", suspendWhenHidden = FALSE)
     
     # Only Render the Download Button if Data Exists
     output$download_ui <- shiny::renderUI({
-      render_conditional_download_button("download_csv", ts_df())
+      render_conditional_download_button(ns = ns, "download_csv", ts_df())
     })
+    
+    output$download_new_csv <- downloadHandler(
+      filename = function() paste0("test_file.csv"),
+      content = function(file) {
+        write.csv(mtcars, file)
+      }
+    )
+    
+    
   })
 }

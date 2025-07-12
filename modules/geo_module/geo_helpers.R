@@ -8,7 +8,6 @@
 #' This file includes:
 #' \itemize{
 #'   \item{\code{\link{get_geo_metrics}}: SQL query for country-level KPI data.}
-#'   \item{\code{\link{format_geo_kpi_display}}: Prettifies shared KPIs for UI cards.}
 #'   \item{\code{\link{geo_plotter}}: Builds styled Plotly choropleth plots.}
 #' }
 #'
@@ -20,7 +19,7 @@
 #' 
 #' @note All functions assume prior setup of a DuckDB temporary table named
 #' \code{filtered_invoices}. That table should be pre-filtered for genre,
-#' artist, and country before calling the time series helpers.
+#' artist, and country before calling the module helpers.
 #'
 #' @keywords internal helper geographic-distribution module dashboard reactive SQL
 
@@ -29,7 +28,7 @@
 #' Queries the filtered_invoices temp table in DuckDB and returns
 #' year-country aggregates for KPIs, including revenue, purchases,
 #' tracks sold, customer counts, and first-time customer flag.
-#' Data is pre-grouped by month to reduce processing in R.
+#' Data is pre-grouped by year or in aggregate to reduce processing in R.
 #'
 #' @param con DBI connection to DuckDB (validated).
 #' @param date_range Character vector of length 2 (YYYY-MM-DD).
@@ -126,56 +125,6 @@ get_geo_metrics <- function(con, date_range, mode = "yearly") {
     dplyr::relocate('num_months', .after = 'year')
 }
 
-#' Format Geographic KPI Display Values
-#'
-#' Extracts relevant KPIs from the kpis_shared object and formats
-#' them for visual display in Shiny cards or tooltips. All fields are 
-#' prettified using `format_kpi_value()`. 
-#'
-#' @param kpis_shared Named list containing precomputed KPI objects.
-#'
-#' @return Named list of formatted KPI values (all character strings).
-#' @export
-format_geo_kpi_display <- function(kpis_shared) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-    message(
-      "[KPI] format_geo_kpi_display(): formatting KPIs from kpis_shared."
-    )
-  }
-  
-  if(is.null(kpis_shared)){
-    if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-      message("[KPI] format_geo_kpi_display(): No shared KPIs.")
-    }
-    return(NULL)
-  }
-  
-  if (!is.list(kpis_shared)) {
-    warning("Invalid `kpis_shared`. Must be a named list.")
-    return(NULL)
-  }
-  
-  topns <- kpis_shared$topn$topn_billingcountry 
-  
-  kpi_list <- list(
-    revenue = topns$revenue |> 
-      dplyr::mutate(group_val = format_kpi_value(group_val, type = "country")),
-    num_customers = topns$num_customers |> 
-      dplyr::mutate(group_val = format_kpi_value(group_val, type = "country")),
-    first_time_customers = topns$first_time_customers |> 
-      dplyr::mutate(group_val = format_kpi_value(group_val, type = "country")),
-    num_purchases =  topns$num_purchases |> 
-      dplyr::mutate(group_val = format_kpi_value(group_val, type = "country")),
-    tracks_sold = topns$tracks_sold |> 
-      dplyr::mutate(group_val = format_kpi_value(group_val, type = "country")),
-    num_countries = format_kpi_value(
-      kpis_shared$metadata_kpis$num_countries, "number"
-    )
-  )
-  
-  return(kpi_list)
-}
-
 #' Create Animated Yearly Choropleth Plot with Metric Overlay
 #'
 #' Generates an interactive Plotly choropleth plot showing the country-level
@@ -183,7 +132,7 @@ format_geo_kpi_display <- function(kpis_shared) {
 #' aggregate, using pre-aggregated country-level data. Visual style
 #' dynamically adapts to light/dark theme options.
 #'
-#' Tooltips include expanded monthly KPIs including revenue, purchases,
+#' Tooltips include expanded country-year KPIs including revenue, purchases,
 #' tracks sold, customer counts, and derived metrics.
 #'
 #' @param df A data.frame of country-level KPI summary data.
@@ -218,7 +167,7 @@ geo_plotter <- function(df, metric, styles) {
   }
   
   if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[TS] 🔍 ts_plotter(): building time-series plot.")
+    message("[GEO] geo_plotter(): building choropleth plot.")
   }
   
   # Make 'year' into an ordered factor, with 'All' last in animation

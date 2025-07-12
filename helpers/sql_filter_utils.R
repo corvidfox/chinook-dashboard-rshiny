@@ -1,4 +1,4 @@
-#' @file filter_helpers.R
+#' @file sql_filter_utils.R
 #' @title SQL Filter Utilities for Reactive Querying
 #'
 #' @description

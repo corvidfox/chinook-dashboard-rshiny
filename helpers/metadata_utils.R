@@ -4,14 +4,19 @@
 #' @description
 #' Utility functions for retrieving and summarizing metadata from the
 #' Chinook DuckDB dataset. These functions support UI filter options,
-#' catalog construction, and sidebar summaries. Includes:
-#'
-#' - `get_filter_meta()`: global filter values and date range
-#' - `make_static_summary_table()`: formats KPIs into a summary datatable
-#' - `create_catalog_tables()`: constructs artist/genre temp catalog tables
-#' - `check_catalog_tables()`: validates performance of 
-#'    `create_catalog_tables()`
-#'
+#' catalog construction, and sidebar summaries. 
+#' Includes:
+#' \itemize{
+#'   \item{\code{\link{get_filter_meta()}}: Global filter values and date 
+#'     range.}
+#'   \item{\code{\link{make_static_summary_table()}}: Formats KPIs into a 
+#'     summary datatable.}
+#'   \item{\code{\link{create_catalog_tables()}}: Constructs artist/genre 
+#'     temp catalog tables.}
+#'   \item{\code{\link{check_catalog_tables()}}: Validates performance of 
+#'     `create_catalog_tables()`.}
+#' }
+#' 
 #' These helpers are optimized for large datasets and support scalable,
 #' template-driven Shiny dashboards.
 #'
@@ -145,6 +150,10 @@ create_catalog_tables <- function(con) {
   if (exists("enable_logging", inherits = TRUE) && enable_logging) {
     message("[DATA META] Creating catalog tables in DuckDB.")
   }
+  
+  # Drop temp tables if they already exist
+  DBI::dbExecute(con, "DROP TABLE IF EXISTS genre_catalog")
+  DBI::dbExecute(con, "DROP TABLE IF EXISTS artist_catalog")
   
   DBI::dbExecute(con, "
     CREATE TEMP TABLE genre_catalog AS

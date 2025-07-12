@@ -1,4 +1,4 @@
-#' @file stylers.R
+#' @file style_utils.R
 #' @title Thematic and Plot Styling Utilities for UI and KPI Formatting
 #'
 #' @description

@@ -193,7 +193,7 @@ ts_plotter <- function(df, metric, styles) {
   }
   
   if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[TS] 🔍 ts_plotter(): building time-series plot.")
+    message("[TS] ts_plotter(): building time-series plot.")
   }
   
   # Plot construction

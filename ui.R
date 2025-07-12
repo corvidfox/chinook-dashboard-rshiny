@@ -53,7 +53,6 @@ bslib::page_fluid(
         value = c(min_date, max_date),
         dateFormat = "yyyy-MMM",
         separator = " to ",
-        view = "months",
         minView = "months",
         minDate = min_date,
         maxDate = max_date,
@@ -90,6 +89,14 @@ bslib::page_fluid(
               target = "_blank"
             )
           ),
+          p(
+            bsicons::bs_icon("github"),
+            a(
+              "GitHub Repo",
+              href = "https://github.com/corvidfox/chinook-dashboard-rshiny",
+              target = "_blank"
+            )
+            ),
           p(
             bsicons::bs_icon("link-45deg"), 
             a(
@@ -130,10 +137,9 @@ bslib::page_fluid(
       bslib::nav_panel("Geographic Distribution", geo_ui("geo")),
       bslib::nav_panel("Performance by Genre", group_ui("genre")),
       bslib::nav_panel("Performance by Artist", group_ui("artist")),
-      bslib::nav_panel("Customer Retention", "Coming soon."), 
-        #retention_ui("retention")),
+      bslib::nav_panel("Customer Retention", retention_ui("retention")),
       bslib::nav_panel("Key Insights", "Coming Soon." 
-                       #insights_ui("insights")
+      #                  #insights_ui("insights")
       )
     )
   )

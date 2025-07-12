@@ -1,27 +1,32 @@
-#' @file kpi_utils.R
-#' @title KPI Card UI Builders and Layout Helpers
-#'
 #' @description
 #' This module contains helper functions for constructing responsive,
 #' Bootstrap-themed KPI cards used across Shiny dashboard modules.
-#' It supports light/dark theming, tooltip-augmented entries,
+#' It supports dynamic theming, tooltip-augmented entries,
 #' conditional rendering for missing KPI states, and dynamic layout
 #' formatting for multi-line card content.
-#'
-#' Functions include:
-#'
-#' - `build_kpi()`: Creates a single KPI entry (label, value, tooltip)
-#' - `render_kpi_card()`: Renders a complete Bootstrap-style KPI card
-#' - `safe_kpi_card()`: Wraps card rendering with fallback logic
-#' - `build_kpi_list_html()`: Generates HTML lists from KPI label/value pairs
-#' - `safe_kpi_entry()`: Formats a single KPI line with fallback protection
-#' - `format_kpi_value()`: Formats raw numeric KPI values into consistent 
-#'   currency, percent, number, or country-label strings for display
 #'
 #' These are used across modules to render formatted KPI metrics with
 #' semantic structure and consistent styling.
 #'
-#' @seealso [format_kpi_value()], [generate_styles()], [bsplus::bs_embed_tooltip()]
+#' Currently includes:
+#' \itemize{
+#'   \item{\code{\link{build_kpi()}}: Creates a single KPI entry (label, 
+#'     value, tooltip).}
+#'   \item{\code{\link{render_kpi_card()}}: Renders a complete Bootstrap-style 
+#'     KPI card.}
+#'   \item{\code{\link{safe_kpi_card()}}: Wraps card rendering with fallback 
+#'     logic.}
+#'   \item{\code{\link{build_kpi_list_html()}}: Generates HTML lists from KPI 
+#'     label/value pairs.}
+#'   \item{\code{\link{safe_kpi_entry()}}: Formats a single KPI line with 
+#'     fallback protection.}
+#'   \item{\code{\link{format_kpi_value()}}: Formats raw numeric KPI values 
+#'     into consistent currency, percent, number, or country-label strings for 
+#'     display.}
+#' }
+#'
+#' @seealso [format_kpi_value()], [generate_styles()], 
+#'   [bsplus::bs_embed_tooltip()]
 #' @keywords internal
 
 #' Build a KPI Entry for Card Display
@@ -44,6 +49,61 @@ build_kpi <- function(label, value, tooltip = NULL) {
   }
   
   list(label = label, value = value, tooltip = tooltip)
+}
+
+#' Build Single KPI Entry with Fallback for Missing Values
+#'
+#' Creates a KPI line that defaults to `"No data available"` when the
+#' value is NULL, NA, or an empty string. Ensures cards stay readable
+#' and consistent in cases of missing input.
+#'
+#' @param label A string describing the KPI metric.
+#' @param value A string or numeric value (can be NULL).
+#' @param tooltip Optional tooltip to include.
+#'
+#' @return A KPI list item for `render_kpi_card()`.
+#' @examples
+#' safe_kpi_entry("Revenue", NULL, "Total USD income")
+#'
+#' @keywords internal
+safe_kpi_entry <- function(label, value, tooltip = NULL) {
+  val <- if (is.null(value) || value == "" || is.na(value)) {
+    "No data available"
+  } else {
+    value
+  }
+  
+  build_kpi(label = label, value = val, tooltip = tooltip)
+}
+
+#' Generate HTML List for KPI Card Display
+#'
+#' Converts KPI label/value pairs into a formatted HTML string suitable
+#' for use inside `build_kpi()` values. Supports ordered (`<ol>`) or
+#' unordered (`<ul>`) lists.
+#'
+#' @param labels Character vector of label strings.
+#' @param values Character vector of value strings. Must be same length.
+#' @param ordered Logical. If TRUE, creates `<ol>`; else `<ul>`.
+#'
+#' @return A character string containing HTML-formatted list.
+#' @examples
+#' build_kpi_list_html(c("USA", "UK"), c("$100K", "$85K"))
+#'
+#' @keywords internal
+build_kpi_list_html <- function(labels, values, ordered = TRUE) {
+  stopifnot(length(labels) == length(values))
+  tag <- if (ordered) "ol" else "ul"
+  
+  entries <- paste0(
+    "<li><strong>", labels, "</strong> (", values, ")</li>"
+  )
+  
+  html <- glue::glue(
+    "<{tag} style='margin: 0; padding-left: 1rem;'>\n{paste(entries, collapse = '\n')}\n</{tag}>"
+  )
+  
+  return(html)
 }
 
 #' Render a Thematic KPI Card
@@ -174,61 +234,6 @@ safe_kpi_card <- function(
     tooltip  = tooltip,
     styles   = styles
   )
-}
-
-#' Generate HTML List for KPI Card Display
-#'
-#' Converts KPI label/value pairs into a formatted HTML string suitable
-#' for use inside `build_kpi()` values. Supports ordered (`<ol>`) or
-#' unordered (`<ul>`) lists.
-#'
-#' @param labels Character vector of label strings.
-#' @param values Character vector of value strings. Must be same length.
-#' @param ordered Logical. If TRUE, creates `<ol>`; else `<ul>`.
-#'
-#' @return A character string containing HTML-formatted list.
-#' @examples
-#' build_kpi_list_html(c("USA", "UK"), c("$100K", "$85K"))
-#'
-#' @keywords internal
-build_kpi_list_html <- function(labels, values, ordered = TRUE) {
-  stopifnot(length(labels) == length(values))
-  tag <- if (ordered) "ol" else "ul"
-  
-  entries <- paste0(
-    "<li><strong>", labels, "</strong> (", values, ")</li>"
-  )
-  
-  html <- glue::glue(
-    "<{tag} style='margin: 0; padding-left: 1rem;'>\n{paste(entries, collapse = '\n')}\n</{tag}>"
-  )
-  
-  return(html)
-}
-
-#' Build Single KPI Entry with Fallback for Missing Values
-#'
-#' Creates a KPI line that defaults to `"No data available"` when the
-#' value is NULL, NA, or an empty string. Ensures cards stay readable
-#' and consistent in cases of missing input.
-#'
-#' @param label A string describing the KPI metric.
-#' @param value A string or numeric value (can be NULL).
-#' @param tooltip Optional tooltip to include.
-#'
-#' @return A KPI list item for `render_kpi_card()`.
-#' @examples
-#' safe_kpi_entry("Revenue", NULL, "Total USD income")
-#'
-#' @keywords internal
-safe_kpi_entry <- function(label, value, tooltip = NULL) {
-  val <- if (is.null(value) || value == "" || is.na(value)) {
-    "No data available"
-  } else {
-    value
-  }
-  
-  build_kpi(label = label, value = val, tooltip = tooltip)
 }
 
 #' Format KPI Value for Display
