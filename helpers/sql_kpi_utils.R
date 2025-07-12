@@ -726,3 +726,8 @@ get_retention_kpis <- function(con,
 # across identical filter sets
 memo_get_retention_cohort_data <- 
   memoise::memoise(get_retention_cohort_data, cache = shared_cache)
+
+# Memoised version of get_events_shared() to avoid recomputation 
+# across identical filter sets
+memo_get_events_shared <- 
+  memoise::memoise(get_events_shared, cache = shared_cache)
