@@ -50,12 +50,13 @@ group_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      get_group_yearly_summary(
+      memo_get_group_yearly_summary(
         con = con,
         date_range = as.character(date_range()),
         group_var = group_var
       )
-    })
+    }) %>%
+      shiny::bindCache(events_shared(), date_range())
     
     group_kpis <- shiny::reactive({
       # Ensure reactivity when upstream events table updates

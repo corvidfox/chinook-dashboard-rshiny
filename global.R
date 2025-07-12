@@ -21,6 +21,7 @@ library(bslib)
 library(bsicons)
 library(bsplus)
 library(rlang)
+library(memoise)
 
 library(DBI)
 library(duckdb)
@@ -69,10 +70,11 @@ for (f in module_files) {
 # ---- Logging ----
 enable_logging <- Sys.getenv("SHINY_ENV") != "production"
 
-# ---- Cache Size Cap ----
+# ---- Cache with Size Cap ----
 options(shiny.reactlog = enable_logging)
 # 50 MB
-shiny::shinyOptions(cache = cachem::cache_mem(max_size = 50 * 1024^2))
+shared_cache <- cachem::cache_mem(max_size = 50 * 1024^2)
+shiny::shinyOptions(cache = shared_cache)
 
 # ---- Connect to Chinook DuckDB Database ----
 # Uses embedded DuckDB; requires relative path resolution

@@ -47,13 +47,14 @@ retention_server <- function(
     decay_df <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
-      get_retention_decay_data(
+      memo_get_retention_decay_data(
         con = con, 
         tbl = "filtered_invoices", 
         date_range = as.character(date_range()), 
         max_offset = NULL
       )
-    })
+    }) %>%
+      shiny::bindCache(events_shared(), date_range())
     
     retention_kpis <- shiny::reactive({
       # Ensure reactivity when upstream events table updates

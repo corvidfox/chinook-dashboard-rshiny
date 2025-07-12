@@ -245,3 +245,7 @@ geo_plotter <- function(df, metric, styles) {
     ) %>%
     plotly::animation_opts(frame = 1000, transition = 0, redraw = TRUE)
 }
+
+# Memoised version of get_geo_metrics() to avoid recomputation across 
+# identical filter sets
+memo_get_geo_metrics <- memoise::memoise(get_geo_metrics, cache = shared_cache)

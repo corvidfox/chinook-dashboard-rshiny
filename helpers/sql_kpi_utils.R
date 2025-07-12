@@ -721,3 +721,8 @@ get_retention_kpis <- function(con,
   return(kpis)
   
 }
+
+# Memoised version of get_retention_cohort_data() to avoid recomputation 
+# across identical filter sets
+memo_get_retention_cohort_data <- 
+  memoise::memoise(get_retention_cohort_data, cache = shared_cache)

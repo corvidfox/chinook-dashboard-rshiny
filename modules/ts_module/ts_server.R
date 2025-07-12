@@ -44,12 +44,13 @@ ts_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      get_ts_monthly_summary(
+      memo_get_ts_monthly_summary(
         con = con,
         date_range = as.character(date_range())
       )
       
-    })
+    }) %>%
+      shiny::bindCache(events_shared(), date_range())
     
     ts_kpis <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
@@ -160,7 +161,7 @@ ts_server <- function(
     
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
-      filename = function() paste0("chinook_ts_", Sys.Date(), ".csv"),
+      filename = function() paste0("chinook_{ns}_", Sys.Date(), ".csv"),
       content = function(file) write.csv(ts_df(), file, row.names = FALSE)
     )
     shiny::outputOptions(output, "download_csv", suspendWhenHidden = FALSE)

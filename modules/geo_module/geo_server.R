@@ -44,12 +44,13 @@ geo_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      get_geo_metrics(
+      memo_get_geo_metrics(
         con = con,
         date_range = as.character(date_range()),
         mode = "yearly"
       )
-    })
+    }) %>%
+      shiny::bindCache(events_shared(), date_range())
     
     geo_agg <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
