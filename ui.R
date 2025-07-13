@@ -117,7 +117,10 @@ bslib::page_fluid(
           p(
             bsicons::bs_icon("calendar2-check-fill"), 
             "Last updated: ", 
-            Sys.Date()
+            format(
+              as.Date(last_commit, format = "%a %b %d %H:%M:%S %Y"), 
+              "%B %e, %Y"
+              )
           ),
           
           # Static summary table of full dataset stats

@@ -122,3 +122,6 @@ metric_choices <- c(
   "Number of Purchases" = "num_purchases",
   "Tracks Sold" = "tracks_sold"
 )
+
+# ---- Pull Last Commit (Update Date) ----
+last_commit <- readRDS("data/last_commit.rds")
