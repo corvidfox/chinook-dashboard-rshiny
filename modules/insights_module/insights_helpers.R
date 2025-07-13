@@ -1,43 +1,64 @@
 #' @file insights_helpers.R
-#' @title Key Insights Module Helpers
+#' @title Helper Functions for Insights Panel
 #'
-#' Shared utilities for formatting and visualizing insights panel metrics and
-#' other UI elements.
+#' Provides UI builder functions for constructing formatted KPI cards in the
+#' Insights panel. These functions support consistent layout and theme styling
+#' for overall vs. filtered metrics across categories.
 #'
-#' This file includes:
-#' \itemize{
-#'   \item{\code{\link{make_insights_kpi_card}}: Generates a single insights 
-#'     panel KPI card.}
-#'   \item{\code{\link{generate_insights_kpi_cards_ui}}: Generates the 
-#'   side-by-side KPI cards for a given category.}
-#' }
+#' Includes:
+#' - \code{\link{make_insights_kpi_card}}: Builds one KPI card with bullets.
+#' - \code{\link{generate_insights_kpi_cards_ui}}: Renders two cards side-by-side.
 #'
-#' These helpers are reactive-safe, modular in design, and compatible 
-#' with dynamic filters, light/dark themes, and flexible metric overlays.
+#' Designed for use in \code{insights_server.R} and compatible with
+#' formatting helpers from \code{kpi_cards_utils.R}.
 #'
-#' Recommended for use in server-side logic within \code{retention_server.R}, 
-#' and optionally paired with formatting utilities from \code{kpi_utils.R}.
-#'
-#' @keywords internal helper insights module dashboard reactive
+#' @keywords internal
 
-#' Generate a single insights KPI card
+#' Build a single KPI card for the Insights panel
 #'
-#' @param kpi_values Named list of KPI values for display.
-#' @param cfg A list with elements:
-#'   * icon: shiny tag for the card icon
-#'   * bullets: list of bullet defs, each a list with
-#'       - title: character
-#'       - value_fn: function(kpi_values) -> character
-#'       - subtitle: character
-#' @param label Character; title for this KPI card.
-#' @param styles A styles() list for theming.
-#' @return A Shiny UI tag containing a styled KPI card.
-#' @import shiny purrr
+#' Constructs a themed KPI card with a list of bullet points representing
+#' either summary values or formatted HTML lists.
+#'
+#' @param kpi_values Named list containing KPI values for display.
+#' @param cfg Configuration list with:
+#'   \describe{
+#'     \item{icon}{Shiny tag for card icon.}
+#'     \item{bullets}{List of bullet specs, each with:}
+#'       \itemize{
+#'         \item{\code{type}: Either "value" or "list".}
+#'         \item{\code{label}: Text label for the bullet.}
+#'         \item{\code{value_fn}/\code{list_fn}: Function to compute value.}
+#'         \item{\code{tooltip}: Tooltip description.}
+#'       }
+#'   }
+#' @param label Title for the KPI card.
+#' @param styles Theme styles from \code{styles()}.
+#'
+#' @return A \code{safe_kpi_card()} UI component.
 #' @export
 make_insights_kpi_card <- function(kpi_values, cfg, label, styles) {
-  stopifnot(is.list(kpi_values), is.list(cfg))
+  # If KPI values are invalid or missing, return fallback card
+  if (!is.list(kpi_values) || length(kpi_values) == 0) {
+    return(
+      safe_kpi_card(
+        kpis    = list(),
+        title   = label,
+        icon    = cfg$icon,
+        tooltip = paste0(label, " metrics (no data)"),
+        styles  = styles,
+        body_fn = function() {
+          list(
+            safe_kpi_entry(
+              label   = "No data available",
+              value   = "",
+              tooltip = paste0("No metrics found for ", label)
+            )
+          )
+        }
+      )
+    )
+  }
   
-  # build bullet elements
   bullets <- purrr::map(cfg$bullets, function(b) {
     val <- switch(b$type,
                   value = b$value_fn(kpi_values),
@@ -45,7 +66,7 @@ make_insights_kpi_card <- function(kpi_values, cfg, label, styles) {
                   stop("Unknown bullet type: ", b$type)
     )
     
-    build_kpi(
+    safe_kpi_entry(
       label   = b$label,
       value   = val,
       tooltip = b$tooltip
@@ -62,15 +83,20 @@ make_insights_kpi_card <- function(kpi_values, cfg, label, styles) {
   )
 }
 
-#' Generate the insights KPI cards UI
+#' Render two KPI cards side-by-side for a given category
 #'
-#' This will render two cards per category (Overall vs Filtered).
+#' Applies \code{make_insights_kpi_card()} to both the full dataset and
+#' filtered subset for comparison, styled within a responsive layout.
 #'
-#' @param kpi_categories Named list of category configs. Each element must
-#'   include `get_overall()`, `get_subset()`, `icon`, and `bullets`.
-#' @param styles A styles() list for theming.
-#' @return A shiny.tagList of KPI card layouts.
-#' @import shiny purrr bslib
+#' @param cfg A single category config list containing:
+#'   \describe{
+#'     \item{\code{get_overall}}{Function returning full KPI values.}
+#'     \item{\code{get_subset}}{Function returning filtered KPI values.}
+#'     \item{\code{icon}, \code{bullets}}{As defined in \code{make_insights_kpi_card}.}
+#'   }
+#' @param styles A list of theme styles from \code{styles()}.
+#'
+#' @return A \code{bslib::layout_column_wrap()} containing both cards.
 #' @export
 generate_insights_kpi_cards_ui <- function(cfg, styles) {
   stopifnot(is.list(cfg), is.list(styles))
@@ -83,7 +109,6 @@ generate_insights_kpi_cards_ui <- function(cfg, styles) {
     min_width = 200,
     gap       = "1rem",
     fill      = TRUE,
-    
     make_insights_kpi_card(all_kpis,    cfg, "All Data",     styles),
     make_insights_kpi_card(subset_kpis, cfg, "Filtered View", styles)
   )

@@ -48,11 +48,105 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
         )
       )
     )
-    
-    kpi_categories <- list(
-      Revenue = revenue_category
+    # 2. Purchases Tab
+    purchase_category <- list(
+      get_overall = function() kpis_static(),
+      get_subset  = function() kpis_subset(),
+      icon        = bsicons::bs_icon("bag-fill"),
+      bullets     = list(
+        list(
+          type     = "value",
+          label    = "Total Orders",
+          value_fn = function(k) {
+            format_kpi_value(k$purchase_kpis$total_orders, "number")
+          },
+          tooltip  = "Number of purchases (invoices) in range"
+        ),
+        list(
+          type     = "value",
+          label    = "Avg Revenue per Order",
+          value_fn = function(k) {
+            format_kpi_value(k$purchase_kpis$avg_rev_per_order, "dollar")
+          },
+          tooltip  = "Average income per invoice"
+        ),
+        list(
+          type     = "value",
+          label    = "Total Tracks Sold",
+          value_fn = function(k) {
+            format_kpi_value(k$purchase_kpis$total_tracks, "number")
+          },
+          tooltip  = "Number of individual tracks purchased"
+        ),
+        list(
+          type     = "value",
+          label    = "Avg Tracks per Order",
+          value_fn = function(k) {
+            format_kpi_value(k$purchase_kpis$avg_tracks_per_order, "float")
+          },
+          tooltip  = "Average track count per invoice"
+        )
+      )
     )
     
+    
+    # 3. Customer Behavior Tab
+    customer_category <- list(
+      get_overall = function() kpis_static(),
+      get_subset  = function() kpis_subset(),
+      icon        = bsicons::bs_icon("people-fill"),
+      bullets     = list(
+        list(
+          type     = "value",
+          label    = "Total Customers",
+          value_fn = function(k) {
+            format_kpi_value(k$customer_kpis$total_customers, "number")
+          },
+          tooltip  = "Number of customers active in date range"
+        ),
+        list(
+          type     = "value",
+          label    = "% New Customers",
+          value_fn = function(k) {
+            format_kpi_value(k$customer_kpis$pct_new_customers, "percent")
+          },
+          tooltip  = "Customers with first purchase in date range"
+        ),
+        list(
+          type     = "value",
+          label    = "Revenue per Customer",
+          value_fn = function(k) {
+            total <- k$revenue_kpis$total_revenue
+            n     <- k$customer_kpis$total_customers
+            if (is.null(total) || is.null(n) || n == 0) return("—")
+            format_kpi_value(total / n, "dollar")
+          },
+          tooltip  = "Average revenue per active customer"
+        ),
+        list(
+          type     = "value",
+          label    = "Top 3-Month Retention",
+          value_fn = function(k) {
+            cohort <- k$retention_kpis$top_cohort_month_3
+            rate   <- k$retention_kpis$top_cohort_retention_3
+            glue::glue("{cohort} ({rate})")
+          },
+          tooltip  = "Best-performing 3-month cohort"
+        ),
+        list(
+          type     = "value",
+          label    = "Top 6-Month Retention",
+          value_fn = function(k) {
+            cohort <- k$retention_kpis$top_cohort_month_6
+            rate   <- k$retention_kpis$top_cohort_retention_6
+            glue::glue("{cohort} ({rate})")
+          },
+          tooltip  = "Best-performing 6-month cohort"
+        )
+      )
+    )
+    
+    # --- Render KPI Cards ---
     output$revenue_cards <- shiny::renderUI({
       generate_insights_kpi_cards_ui(
         cfg    = revenue_category,
@@ -60,7 +154,24 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
       )
     })
     
+    output$customer_cards <- shiny::renderUI({
+      generate_insights_kpi_cards_ui(
+        cfg    = customer_category,
+        styles = styles()
+      )
+    })
     
+    output$purchase_cards <- shiny::renderUI({
+      generate_insights_kpi_cards_ui(
+        cfg    = purchase_category,
+        styles = styles()
+      )
+    })
+    
+    # --- Narrative Panels ---
+    
+    
+    # --- "How this Works" Panel ---
 
   })
 }

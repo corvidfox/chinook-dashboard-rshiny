@@ -12,8 +12,18 @@ insights_ui <- function(id) {
           "Revenue", 
           br(),
           shiny::uiOutput(ns("revenue_cards"))
+        ),
+        bslib::nav_panel(
+          "Purchase Patterns", 
+          br(),
+          shiny::uiOutput(ns("purchase_cards"))
+        ),
+        bslib::nav_panel(
+          "Customer Behavior", 
+          br(),
+          shiny::uiOutput(ns("customer_cards"))
         )
-        )
+      )
       
       
       
