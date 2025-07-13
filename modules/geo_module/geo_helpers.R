@@ -44,9 +44,7 @@ get_geo_metrics <- function(con, date_range, mode = "yearly") {
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-    message("[SQL] get_geo_metrics(): querying pre-aggregated KPIs.")
-  }
+  log_msg("[SQL] get_geo_metrics(): querying pre-aggregated KPIs.")
   
   group_by_clause <- if (mode == "yearly") {
     glue::glue_sql("STRFTIME('%Y', fd.dt) AS year,")
@@ -166,9 +164,7 @@ geo_plotter <- function(df, metric, styles) {
     )
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[GEO] geo_plotter(): building choropleth plot.")
-  }
+  log_msg("[GEO] geo_plotter(): building choropleth plot.")
   
   # Make 'year' into an ordered factor, with 'All' last in animation
   year_vals <- c(sort(unique(df$year[df$year != "All"])), "All")

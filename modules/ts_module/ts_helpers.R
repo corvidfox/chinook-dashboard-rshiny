@@ -41,9 +41,7 @@ get_ts_monthly_summary <- function(con, date_range) {
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-    message("[SQL] get_ts_monthly_summary(): querying pre-aggregated KPIs.")
-  }
+  log_msg("[SQL] get_ts_monthly_summary(): querying pre-aggregated KPIs.")
   
   query <- glue::glue_sql("
     WITH first_invoices AS (
@@ -103,9 +101,8 @@ get_ts_monthly_summary <- function(con, date_range) {
 #' @return Named list of formatted KPI values (all character strings).
 #' @export
 format_ts_kpi_display <- function(kpis_shared, date_range) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-    message("[KPI] format_ts_kpi_display(): formatting KPIs from kpis_shared.")
-  }
+  
+  log_msg("[KPI] format_ts_kpi_display(): formatting KPIs from kpis_shared.")
   
   # Defensive checks
   if (!is.character(date_range) || length(date_range) != 2) {
@@ -113,9 +110,7 @@ format_ts_kpi_display <- function(kpis_shared, date_range) {
   }
   
   if(is.null(kpis_shared)){
-    if (exists("enable_logging", inherits = TRUE) && enable_logging) { 
-      message("[KPI] format_ts_kpi_display(): No shared KPIs.")
-    }
+    log_msg("[KPI] format_ts_kpi_display(): No shared KPIs.")
     return(NULL)
   }
   
@@ -192,9 +187,7 @@ ts_plotter <- function(df, metric, styles) {
     )
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[TS] ts_plotter(): building time-series plot.")
-  }
+  log_msg("[TS] ts_plotter(): building time-series plot.")
   
   # Plot construction
   p <- suppressWarnings(

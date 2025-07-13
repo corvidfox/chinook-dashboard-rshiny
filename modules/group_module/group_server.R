@@ -1,14 +1,14 @@
 #' @file group_server.R
 #' @title Group Performance Module Server Logic
 #'
-#' Server-side rendering for the Group Performance dashboard panels. This 
-#' module displays pre-aggregated Group-level KPIs, a scrollable summary 
+#' Server-side rendering for the Group Performance dashboard panels. This
+#' module displays pre-aggregated Group-level KPIs, a scrollable summary
 #' table, an interactive plot, and conditional data export options.
 #'
-#' Built to support modular Shiny layouts with reactive filters, 
+#' Built to support modular Shiny layouts with reactive filters,
 #' theming support, and cache-aware data inputs.
 #'
-#' Relies on shared helpers from \code{group_helpers.R}, \code{stylers.R}, and 
+#' Relies on shared helpers from \code{group_helpers.R}, \code{stylers.R}, and
 #' \code{server_utils.R}.
 #'
 #' @keywords internal module server dashboard group-performance chinook
@@ -27,22 +27,20 @@
 #' @param styles Reactive style list for light/dark themes.
 #' @param group_var Name of the grouping variable (e.g. `"Genre"`)
 #' @param group_label Label of the group for UI naming and card headings.
-#' @param max_n Maximum number of group categories to show in the plot. 
+#' @param max_n Maximum number of group categories to show in the plot.
 #'
 #' @return Adds outputs to the module environment.
 #' @export
-group_server <- function(
-    id, 
-    con, 
-    events_shared, 
-    kpis_shared, 
-    metric, 
-    date_range, 
-    styles,
-    group_var,
-    group_label,
-    max_n = 15
-) {
+group_server <- function(id,
+                         con,
+                         events_shared,
+                         kpis_shared,
+                         metric,
+                         date_range,
+                         styles,
+                         group_var,
+                         group_label,
+                         max_n = 15) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -73,7 +71,7 @@ group_server <- function(
         body_fn = function() {
           k <- group_kpis()[[metric()$var_name]]
           metric_label <- metric()$label
-
+          
           list(
             build_kpi(
               label = metric_label %||% glue::glue("Top {group_label}"),
@@ -93,7 +91,9 @@ group_server <- function(
         },
         title = glue::glue("Top {group_label}"),
         icon = bsicons::bs_icon("trophy-fill"),
-        tooltip = glue::glue("Top {nrow(group_kpis()[[metric()$var_name]])} {group_label}, by the chosen metric."),
+        tooltip = glue::glue(
+          "Top {nrow(group_kpis()[[metric()$var_name]])} {group_label}, by the chosen metric."
+        ),
         styles = styles()
       )
     })
@@ -107,7 +107,7 @@ group_server <- function(
           
           list(
             build_kpi(
-              label = "Revenue (% Share)",  
+              label = "Revenue (% Share)",
               value = build_kpi_list_html(
                 labels = k$revenue_fmt,
                 values = k$revenue_share_fmt,
@@ -133,31 +133,25 @@ group_server <- function(
           # Body Items for KPI
           list(
             build_kpi(
-              label = "Tracks (% of Catalog Sold)",  
+              label = "Tracks (% of Catalog Sold)",
               value = build_kpi_list_html(
                 labels = k$catalog_size_fmt,
                 values = k$pct_catalog_sold_fmt,
                 ordered = TRUE
               ),
-              tooltip = paste0(
-                "Total tracks in catalog ",
-                "(% of catalog sold)."
-              )
+              tooltip = paste0("Total tracks in catalog ", "(% of catalog sold).")
             )
           )
         },
         title = "Catalog",
         icon = bsicons::bs_icon("disc-fill"),
-        tooltip = paste0(
-          "Total tracks and percentage of catalog sold."
-        ),
+        tooltip = paste0("Total tracks and percentage of catalog sold."),
         styles = styles()
       )
     })
     
     # --- Plot Output: Interactive Stacked Bar Plot ---
     output$group_plot <- plotly::renderPlotly({
-
       # Ensure reactivity when upstream events table updates
       invisible(events_shared)
       invisible(kpis_shared)
@@ -172,22 +166,32 @@ group_server <- function(
         )
       }
       
-      group_plotter(df = df, metric = metric(), styles = styles(), group_var = group_var, group_label = group_label, max_n = max_n)      
-    })
+      group_plotter(
+        df = df,
+        metric = metric(),
+        styles = styles(),
+        group_var = group_var,
+        group_label = group_label,
+        max_n = max_n
+      )
+    }) %>%
+      shiny::bindCache(events_shared(), date_range(), styles(), metric())
     
     # --- Scrollable Data Table with Metrics ---
     output$table <- DT::renderDataTable({
       df <- group_df()
-      validate(
+      shiny::validate(
         shiny::need(nrow(df) > 0, "No data available for selected filters.")
-      )
+        )
       render_scrollable_table(df)
     })
-
+    
     # --- CSV Download for Raw Transaction Records ---
-    output$download_csv <-shiny::downloadHandler(
-      filename = function() glue::glue("chinook_{tolower(group_var)}_{Sys.Date()}.csv"),
-      content = function(file) write.csv(group_df(), file, row.names = FALSE)
+    output$download_csv <- shiny::downloadHandler(
+      filename = function()
+        glue::glue("chinook_{ns}_{Sys.Date()}.csv"),
+      content = function(file)
+        write.csv(group_df(), file, row.names = FALSE)
     )
     
     # Only Render the Download Button if Data Exists

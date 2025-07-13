@@ -8,8 +8,6 @@
 #' \itemize{
 #'   \item{\code{\link{get_retention_decay_data}}: SQL query for retention 
 #'     decay data.}
-#'   \item{\code{\link{get_retention_cohort_data}}: SQL query for cohort 
-#'     retention trend data.}
 #'   \item{\code{\link{decay_plotter}}: Builds styled Plotly retention 
 #'     decay-curve plots.}
 #'   \item{\code{\link{cohort_heatmap_plotter}}: Builds styled Plotly cohort
@@ -51,9 +49,7 @@ get_retention_decay_data <- function(
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] get_retention_decay_data(): querying pre-aggregated data.")
-  }
+  log_msg("[SQL] get_retention_decay_data(): querying pre-aggregated data.")
   
   if (is.null(max_offset)) {
     date_bounds <- DBI::dbGetQuery(con, glue::glue_sql("
@@ -154,9 +150,7 @@ decay_plotter <- function(df, styles) {
     )
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[RETENTION] decay_plotter(): building retention-decay plot.")
-  }
+  log_msg("[RETENTION] decay_plotter(): building retention-decay plot.")
   
   # Plot construction
   p <- suppressWarnings(
@@ -230,9 +224,10 @@ cohort_heatmap_plotter <- function(df, styles) {
     )
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[RETENTION] cohort_heatmap_plotter(): building cohort retention heatmap plot.")
-  }
+  log_msg(paste0(c(
+    "[RETENTION] cohort_heatmap_plotter(): ",
+    "building cohort retention heatmap plot."
+    )))
   
   # Ensure all Cohort-Months are represented
   df <- tidyr::complete(

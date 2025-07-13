@@ -182,12 +182,13 @@ geo_server <- function(
 
       df <- dplyr::bind_rows(agg_df, yearly_df)
       geo_plotter(df = df, metric = metric(), styles = styles())
-    })
+    }) %>%
+      shiny::bindCache(events_shared(), date_range(), styles(), metric())
     
     # --- Scrollable Data Table with Metrics ---
     output$table <- DT::renderDataTable({
       df <- geo_yearly()
-      validate(
+      shiny::validate(
         shiny::need(nrow(df) > 0, "No data available for selected filters.")
       )
       render_scrollable_table(df)
@@ -195,7 +196,7 @@ geo_server <- function(
 
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
-      filename = function() paste0("chinook_geo_", Sys.Date(), ".csv"),
+      filename = function() paste0("chinook_{ns}_", Sys.Date(), ".csv"),
       content = function(file) write.csv(geo_yearly(), file, row.names = FALSE)
     )
     

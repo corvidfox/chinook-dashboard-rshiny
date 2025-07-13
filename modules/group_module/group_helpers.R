@@ -7,14 +7,15 @@
 #'
 #' This file includes:
 #' \itemize{
-#'   \item{\code{\link{get_group_metrics}}: SQL query for genre-level KPI data.}
+#'   \item{\code{\link{get_group_yearly_summary}}: SQL query for genre-level 
+#'     KPI data.}
 #'   \item{\code{\link{group_plotter}}: Builds styled Plotly stacked bar plots.}
 #' }
 #'
 #' These helpers are reactive-safe, modular in design, and compatible 
 #' with dynamic filters, light/dark themes, and flexible metric overlays.
 #'
-#' Recommended for use in server-side logic within \code{genre_server.R}, 
+#' Recommended for use in server-side logic within \code{group_server.R}, 
 #' and optionally paired with formatting utilities from \code{kpi_utils.R}.
 #' 
 #' @note All functions assume prior setup of a DuckDB temporary table named
@@ -55,9 +56,7 @@ get_group_yearly_summary <- function(con, group_var = "Genre", date_range) {
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message("[SQL] get_group_yearly_summary(): querying data for ", group_var)
-  }
+  log_msg("[SQL] get_group_yearly_summary(): querying data for ", group_var)
   
   group_fields <- switch(group_var,
                          Genre = list(
@@ -168,9 +167,9 @@ group_plotter <- function(df, metric, group_var, group_label, styles, max_n){
     )
   }
   
-  if (exists("enable_logging", inherits = TRUE) && enable_logging) {
-    message(glue::glue("[GROUP] group_plotter(): building stacked bar plot for {group_var}"))
-  }
+  log_msg(glue::glue(
+    "[GROUP] group_plotter(): building stacked bar plot for {group_var}"
+    ))
   
   # Format year as factor so it orders correctly (earliest year on bottom)
   df$year <- factor(

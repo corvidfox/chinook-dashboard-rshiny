@@ -1,14 +1,14 @@
 #' @file ts_server.R
 #' @title Time Series Module Server Logic
 #'
-#' Server-side rendering for the Time Series dashboard panel. This module 
-#' displays pre-aggregated monthly KPIs, a scrollable summary table, 
+#' Server-side rendering for the Time Series dashboard panel. This module
+#' displays pre-aggregated monthly KPIs, a scrollable summary table,
 #' an interactive plot, and conditional data export options.
 #'
-#' Built to support modular Shiny layouts with reactive filters, 
+#' Built to support modular Shiny layouts with reactive filters,
 #' theming support, and cache-aware data inputs.
 #'
-#' Relies on shared helpers from \code{ts_helpers.R}, \code{stylers.R}, and 
+#' Relies on shared helpers from \code{ts_helpers.R}, \code{stylers.R}, and
 #' \code{server_utils.R}.
 #'
 #' @keywords internal module server dashboard time-series chinook
@@ -28,15 +28,13 @@
 #'
 #' @return Adds outputs to the module environment.
 #' @export
-ts_server <- function(
-    id, 
-    con, 
-    events_shared, 
-    kpis_shared, 
-    metric, 
-    date_range, 
-    styles
-) {
+ts_server <- function(id,
+                      con,
+                      events_shared,
+                      kpis_shared,
+                      metric,
+                      date_range,
+                      styles) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -44,10 +42,7 @@ ts_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      memo_get_ts_monthly_summary(
-        con = con,
-        date_range = as.character(date_range())
-      )
+      memo_get_ts_monthly_summary(con = con, date_range = as.character(date_range()))
       
     }) %>%
       shiny::bindCache(events_shared(), date_range())
@@ -68,9 +63,7 @@ ts_server <- function(
           k <- ts_kpis()
           list(
             safe_kpi_entry("Total", k$total_rev, "Total revenue."),
-            safe_kpi_entry(
-              "Avg / Month", k$avg_rev, "Average revenue per month."
-            )
+            safe_kpi_entry("Avg / Month", k$avg_rev, "Average revenue per month.")
           )
         },
         title = "Revenue",
@@ -120,7 +113,9 @@ ts_server <- function(
           list(
             safe_kpi_entry("Total", k$total_customers, "Total unique customers."),
             safe_kpi_entry(
-              "First-Time", k$first_time_pct, "(%)Number of first time customers."
+              "First-Time",
+              k$first_time_pct,
+              "(%)Number of first time customers."
             )
           )
         },
@@ -147,22 +142,27 @@ ts_server <- function(
         )
       }
       
-      ts_plotter(df = df, metric = metric(), styles = styles())
-    })
+      ts_plotter(df = df,
+                 metric = metric(),
+                 styles = styles())
+    }) %>%
+      shiny::bindCache(events_shared(), date_range(), styles(), metric())
     
     # --- Scrollable Data Table with Metrics ---
     output$table <- DT::renderDataTable({
       df <- ts_df()
-      validate(
+      shiny::validate(
         shiny::need(nrow(df) > 0, "No data available for selected filters.")
-      )
+        )
       render_scrollable_table(df)
     })
     
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
-      filename = function() paste0("chinook_{ns}_", Sys.Date(), ".csv"),
-      content = function(file) write.csv(ts_df(), file, row.names = FALSE)
+      filename = function()
+        paste0("chinook_{ns}_", Sys.Date(), ".csv"),
+      content = function(file)
+        write.csv(ts_df(), file, row.names = FALSE)
     )
     shiny::outputOptions(output, "download_csv", suspendWhenHidden = FALSE)
     
@@ -172,7 +172,8 @@ ts_server <- function(
     })
     
     output$download_new_csv <- downloadHandler(
-      filename = function() paste0("test_file.csv"),
+      filename = function()
+        paste0("test_file.csv"),
       content = function(file) {
         write.csv(mtcars, file)
       }
