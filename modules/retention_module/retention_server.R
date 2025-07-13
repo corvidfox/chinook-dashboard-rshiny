@@ -205,7 +205,7 @@ retention_server <- function(id,
       
       decay_plotter(df = df, styles = styles())
     }) %>%
-      shiny::bindCache(events_shared(), date_range(), styles(), metric())
+      shiny::bindCache(events_shared(), date_range(), styles())
     
     # --- Plot Output: Cohort Retention Heatmap Plot ---
     output$cohort_heatmap_plot <- plotly::renderPlotly({
@@ -225,7 +225,7 @@ retention_server <- function(id,
       
       cohort_heatmap_plotter(df = df, styles = styles())
     }) %>%
-      shiny::bindCache(events_shared(), date_range(), styles(), metric())
+      shiny::bindCache(cohort_df_shared(), styles())
     
     # --- Scrollable Data Table with Metrics (Retention Decay Curve) ---
     output$decay_table <- DT::renderDataTable({
