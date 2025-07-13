@@ -11,7 +11,6 @@
 #'     paginated, scrollable data table with fallback handling.}
 #'   \item{\code{\link{render_conditional_download_button}}: Dynamically
 #'     shows a CSV download button only if data is available.}
-#'   \item{\code{\link{log_msg}}: Conditionally creates log messages.}
 #' }
 #'
 #' Designed for integration within modular dashboard panels that rely on
@@ -71,21 +70,3 @@ render_conditional_download_button <- function(
   
   shiny::downloadButton(outputId = ns(output_id), label = label, class = class)
 }
-
-#' Conditional Logging
-#'
-#' Allows log messages if `enable_logging` exists and is set to TRUE. Allows
-#' an optional, additional condition to creating the message.
-#'
-#' @param msg Log message.
-#' @param cond A separate conditional. Must evaluate to TRUE or FALSE. 
-#'   Default is TRUE.
-#'
-#' @return Prints `msg` in the log, conditionally.
-#' @export
-log_msg <- function(msg, cond = TRUE) {
-  if (exists("enable_logging", inherits = TRUE) && enable_logging && cond) {
-    message(msg)
-  }
-}
-

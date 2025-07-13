@@ -41,6 +41,12 @@ library(cachem)
 # ---- Logging ----
 enable_logging <- Sys.getenv("SHINY_ENV") != "production"
 
+log_msg <- function(msg, cond = TRUE) {
+  if (exists("enable_logging", inherits = TRUE) && enable_logging && cond) {
+    message(msg)
+  }
+}
+
 # ---- Cache with Size Cap ----
 options(shiny.reactlog = enable_logging)
 # 50 MB
@@ -51,11 +57,15 @@ shiny::shinyOptions(cache = shared_cache)
 # Uses embedded DuckDB; requires relative path resolution
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
 
+if (exists(con) && DBI::dbIsValid(con)) {
+  log_msg("✅ Successfully connected to duckDb.")
+}
+
 # Close DB connection when app stops
 shiny::onStop(function() {
   try({
     DBI::dbDisconnect(con, shutdown = TRUE)
-    message("Database connection closed.")
+    log_msg("Database connection closed.")
   })
 })
 
@@ -65,9 +75,9 @@ helper_files <- list.files("helpers", full.names = TRUE)
 for (f in helper_files) {
   tryCatch({
     source(f, local = TRUE)
-    message(sprintf("✅ Loaded: %s", f))
+    log_msg(sprintf("✅ Loaded: %s", f))
   }, error = function(e) {
-    message(sprintf("❌ Error in %s:\n  %s", f, e$message))
+    log_msg(sprintf("❌ Error in %s:\n  %s", f, e$message))
   })
 }
 
@@ -82,9 +92,9 @@ module_files <- list.files(
 for (f in module_files) {
   tryCatch({
     source(f, local = TRUE)
-    message(sprintf("✅ Loaded: %s", f))
+    log_msg(sprintf("✅ Loaded: %s", f))
   }, error = function(e) {
-    message(sprintf("❌ Error in %s:\n  %s", f, e$message))
+    log_msg(sprintf("❌ Error in %s:\n  %s", f, e$message))
   })
 }
 
