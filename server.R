@@ -17,8 +17,11 @@
 function(input, output, session) {
 
   ## ---- Theming: Light/Dark Toggle ----
+  theme_mode <- shiny::reactive(input$theme_switcher)
+  theme_debounced <- shiny::debounce(theme_mode, 300)
+  
   shiny::observe({
-    if (isTRUE(input$theme_switcher)) {
+    if (isTRUE(theme_debounced())) {
       session$setCurrentTheme(theme_dark)
     } else {
       session$setCurrentTheme(theme_light)
@@ -27,14 +30,14 @@ function(input, output, session) {
 
   ## ---- Inject Theme-Aware CSS ----
   output$dynamic_styles <- shiny::renderUI({
-    styles <- if (input$theme_switcher == "dark") theme_dark else theme_light
+    styles <- if (theme_debounced() == "dark") theme_dark else theme_light
 
     tags$style(shiny::HTML(generate_css(styles)))
   })
 
   ## ---- Generate Style Parameters for Plots/Cards ----
   styles <- shiny::reactive({
-    mode <- input$theme_switcher
+    mode <- theme_debounced()
     generate_styles(mode)
   })
 
