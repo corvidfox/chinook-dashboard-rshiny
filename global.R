@@ -34,6 +34,7 @@ library(tidyr)
 library(purrr)
 
 # Visualizations
+library(markdown)
 library(ggplot2)
 library(plotly)
 
