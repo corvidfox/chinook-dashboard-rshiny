@@ -57,7 +57,7 @@ shiny::shinyOptions(cache = shared_cache)
 # Uses embedded DuckDB; requires relative path resolution
 con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
 
-if (exists(con) && DBI::dbIsValid(con)) {
+if (exists("con") && DBI::dbIsValid(con)) {
   log_msg("✅ Successfully connected to duckDb.")
 }
 
