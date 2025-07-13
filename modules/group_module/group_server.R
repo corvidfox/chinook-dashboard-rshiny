@@ -54,7 +54,7 @@ group_server <- function(id,
         group_var = group_var
       )
     }) %>%
-      shiny::bindCache(events_shared(), date_range())
+      shiny::bindCache(events_shared(), group_var, date_range())
     
     group_kpis <- shiny::reactive({
       # Ensure reactivity when upstream events table updates
@@ -175,7 +175,7 @@ group_server <- function(id,
         max_n = max_n
       )
     }) %>%
-      shiny::bindCache(events_shared(), date_range(), styles(), metric())
+      shiny::bindCache(events_shared(), group_var, date_range(), styles(), metric())
     
     # --- Scrollable Data Table with Metrics ---
     output$table <- DT::renderDataTable({
