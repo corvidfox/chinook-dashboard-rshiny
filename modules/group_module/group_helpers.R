@@ -56,7 +56,7 @@ get_group_yearly_summary <- function(con, group_var = "Genre", date_range) {
     stop("`date_range` must be a character vector of length 2.")
   }
   
-  log_msg("[SQL] get_group_yearly_summary(): querying data for ", group_var)
+  log_msg("[SQL] get_group_yearly_summary(): querying data for {group_var}")
   
   group_fields <- switch(group_var,
                          Genre = list(
