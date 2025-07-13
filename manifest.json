@@ -2986,14 +2986,17 @@
     ".Rbuildignore": {
       "checksum": "7f3003188f3a78fd085feca239edcc60"
     },
+    ".RData": {
+      "checksum": "a54be67a84471ee60aea2c3f77cb904e"
+    },
     ".Rprofile": {
-      "checksum": "20495bee85c2c3db876bcbba5aacae95"
+      "checksum": "619c6a38aa528e35f05cb3afcfc6e55b"
     },
     "data/chinook.duckdb": {
       "checksum": "d4e677e982ab24639004d08c159496b5"
     },
     "DESCRIPTION": {
-      "checksum": "87afb8f22c8717a83b6896d7318110b4"
+      "checksum": "8f374510f7d782588b4847ad570f035a"
     },
     "global.R": {
       "checksum": "d7472aa3db8bc9c9dc574abd44291b27"
@@ -3053,10 +3056,10 @@
       "checksum": "47bceb24e87d69bee446043d8642823d"
     },
     "modules/insights_module/insights_server.R": {
-      "checksum": "1306daa04361b8ad4b2c1eb12bce98a2"
+      "checksum": "47bf7b0ee16e97aa8b6e33cc541a8313"
     },
     "modules/insights_module/insights_ui.R": {
-      "checksum": "ace384571da7840ba543cb20d2080358"
+      "checksum": "9d46fc7a719f36640196f5b053ac4f68"
     },
     "modules/retention_module/retention_helpers.R": {
       "checksum": "7e5c8d0d91c1591bb404486ff7bdfce5"
