@@ -42,7 +42,7 @@ ts_server <- function(id,
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      memo_get_ts_monthly_summary(con = con, date_range = as.character(date_range()))
+      get_ts_monthly_summary(con = con, date_range = as.character(date_range()))
       
     }) %>%
       shiny::bindCache(events_shared(), date_range())

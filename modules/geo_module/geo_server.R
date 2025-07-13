@@ -44,7 +44,7 @@ geo_server <- function(
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      memo_get_geo_metrics(
+      get_geo_metrics(
         con = con,
         date_range = as.character(date_range()),
         mode = "yearly"

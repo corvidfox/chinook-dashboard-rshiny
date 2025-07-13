@@ -150,7 +150,3 @@ get_shared_kpis <- function(con,
     )
   )
 }
-
-# Memoised version of get_shared_kpis() to avoid recomputation across 
-# identical filter sets
-memo_get_shared_kpis <- memoise::memoise(get_shared_kpis, cache = shared_cache)

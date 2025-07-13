@@ -48,7 +48,7 @@ group_server <- function(id,
       # Ensure reactivity when upstream events table updates
       invisible(events_shared())
       
-      memo_get_group_yearly_summary(
+      get_group_yearly_summary(
         con = con,
         date_range = as.character(date_range()),
         group_var = group_var

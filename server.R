@@ -87,7 +87,7 @@ function(input, output, session) {
 
   # Pull Shared Events Table (CACHED)
   events_shared <- shiny::reactive({
-    memo_get_events_shared(con = con, where_clause_reactive())
+    get_events_shared(con = con, where_clause_reactive())
   }) %>%
     shiny::bindCache(where_clause_reactive())
 
@@ -110,7 +110,7 @@ function(input, output, session) {
     # Ensure reactivity to "filtered_invoices" changes
     invisible(where_clause_reactive())
 
-    memo_get_retention_cohort_data(
+    get_retention_cohort_data(
       con = con,
       tbl = "filtered_invoices",
       date_range = as.character(date_range_clean()),
@@ -125,7 +125,7 @@ function(input, output, session) {
   # Pull Shared KPIs (CACHED)
   kpis_shared <- shiny::reactive({
     cohort_df_shared <- cohort_df_shared()
-    memo_get_shared_kpis(
+    get_shared_kpis(
       con = con,
       tbl = "filtered_invoices",
       metrics = metrics_parsed,
@@ -140,7 +140,7 @@ function(input, output, session) {
   ## ---- Static Values: Full-Set KPIs and Meta Summary for Sidebar ----
   kpis_full <- shiny::reactive({
     cohort_df_shared <- cohort_df_shared()
-    memo_get_shared_kpis(
+    get_shared_kpis(
       con,
       tbl = "Invoice",
       metrics = metrics_parsed,

@@ -264,8 +264,3 @@ group_plotter <- function(df, metric, group_var, group_label, styles, max_n){
     # Override hover mode of styler back to default
     plotly::layout(hovermode = 'closest')
 }
-
-# Memoised version of get_group_yearly_summary() to avoid recomputation across 
-# identical filter sets
-memo_get_group_yearly_summary <- 
-  memoise::memoise(get_group_yearly_summary, cache = shared_cache)

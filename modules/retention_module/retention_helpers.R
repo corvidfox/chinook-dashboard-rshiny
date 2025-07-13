@@ -300,8 +300,3 @@ cohort_heatmap_plotter <- function(df, styles) {
     style_plotly(styles = s)
   
 }
-
-# Memoised version of get_retention_decay_data() to avoid recomputation across 
-# identical filter sets
-memo_get_retention_decay_data <- 
-  memoise::memoise(get_retention_decay_data, cache = shared_cache)

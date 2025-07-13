@@ -233,8 +233,3 @@ ts_plotter <- function(df, metric, styles) {
   
   return(styled_plot)
 }
-
-# Memoised version of get_ts_monthly_summary() to avoid recomputation across 
-# identical filter sets
-memo_get_ts_monthly_summary <- 
-  memoise::memoise(get_ts_monthly_summary, cache = shared_cache)

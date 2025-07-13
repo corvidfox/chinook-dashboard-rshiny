@@ -138,8 +138,7 @@ bslib::page_fluid(
       bslib::nav_panel("Performance by Genre", group_ui("genre")),
       bslib::nav_panel("Performance by Artist", group_ui("artist")),
       bslib::nav_panel("Customer Retention", retention_ui("retention")),
-      bslib::nav_panel("Key Insights", insights_ui("insights")
-      )
+      bslib::nav_panel("Key Insights", insights_ui("insights"))
     )
   )
 )
