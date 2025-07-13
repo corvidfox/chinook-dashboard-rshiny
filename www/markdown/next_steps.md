@@ -1,0 +1,7 @@
+- Investigate Australia’s 2012–13 revenue decline to identify churn drivers or external influences.
+- Analyze U.S. customer cohorts for upsell and retention opportunities given its dominant revenue role.
+- Perform attribute-level analysis within top genres to uncover key drivers of efficiency.
+- Examine cross-genre customer behavior and its impact on lifetime value.
+- Explore causes behind retention spikes and identify effective promotional triggers.
+- Segment customers by retention behavior for tailored marketing.
+- Study product-level repeat purchases for granular insights.
