@@ -12,31 +12,33 @@
 #' @seealso ui.R, server.R
 
 # ---- Load Required Libraries ----
-# TO DO: Alphabetize
-library(shiny)
-library(shinydashboard)
-library(shinyWidgets)
-library(shinycssloaders)
+# Base & Shiny Ecosystem
 library(bslib)
 library(bsicons)
 library(bsplus)
-library(rlang)
+library(cachem)
 library(memoise)
+library(rlang)
+library(shiny)
+library(shinyWidgets)
+library(shinydashboard)
 
-library(DBI)
-library(duckdb)
-
+# Data Manipulation
+library(countrycode)
 library(dplyr)
-library(tidyr)
 library(glue)
 library(lubridate)
 library(scales)
-library(countrycode)
+library(tidyr)
+library(purrr)
 
-library(plotly)
+# Visualizations
 library(ggplot2)
+library(plotly)
 
-library(cachem)
+# Database
+library(DBI)
+library(duckdb)
 
 # ---- Logging ----
 enable_logging <- Sys.getenv("SHINY_ENV") != "production"
@@ -55,7 +57,9 @@ shiny::shinyOptions(cache = shared_cache)
 
 # ---- Connect to Chinook DuckDB Database ----
 # Uses embedded DuckDB; requires relative path resolution
-con <- DBI::dbConnect(duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE)
+con <- DBI::dbConnect(
+  duckdb::duckdb(), dbdir = "data/chinook.duckdb", read_only = TRUE
+  )
 
 if (exists("con") && DBI::dbIsValid(con)) {
   log_msg("✅ Successfully connected to duckDb.")
