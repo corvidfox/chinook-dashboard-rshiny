@@ -49,15 +49,17 @@ function(input, output, session) {
       value = c(min_date, max_date)
     )
     shiny::updateSelectizeInput(
-      session, "genre", selected = NULL, server = TRUE
+      session, "genre", choices = genre_choices, selected = NULL, server = TRUE
     )
     shiny::updateSelectizeInput(
-      session, "artist", selected = NULL, server = TRUE
+      session, "artist", choices = artist_choices, selected = NULL, server = TRUE
     )
     shiny::updateSelectizeInput(
-      session, "country", selected = NULL, server = TRUE
+      session, "country", choices = country_choices, selected = NULL, server = TRUE
     )
-    shiny::updateSelectInput(session, "metric", selected = "revenue")
+    shiny::updateSelectInput(
+      session, "metric", choices = metric_choices, selected = "revenue"
+      )
   })
   
   ## ---- Reactive Filters ----
