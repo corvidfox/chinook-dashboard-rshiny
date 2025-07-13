@@ -193,5 +193,5 @@ function(input, output, session) {
     cohort_df_shared = cohort_df_shared, kpis_shared = kpis_shared,
     date_range = date_range_clean, styles = styles, max_offset = NULL
   )
-  #insights_server("insights", styles = styles)
+  insights_server("insights", kpis_static = kpis_full, kpis_subset = kpis_shared, styles = styles)
 }

@@ -1,32 +1,66 @@
-insights_server <- function(id, kpi_data, styles) {
+insights_server <- function(id, kpis_static, kpis_subset, styles) {
   moduleServer(id, function(input, output, session) {
-    # All outputs use pre-computed KPI values passed in
-    output$cust_count     <- renderText(kpi_data()$num_customers)
-    output$cust_pct_new   <- renderText(kpi_data()$pct_new_customers)
-    output$life_full      <- renderText(kpi_data()$avg_lifespan_months_total)
-    output$life_subset    <- renderText(kpi_data()$avg_lifespan_months_window)
+
+    ns <- session$ns
     
-    output$repeat_total   <- renderText(kpi_data()$repeat_rate_total)
-    output$repeat_ret     <- renderText(kpi_data()$repeat_rate_returning)
-    output$repeat_new     <- renderText(kpi_data()$repeat_rate_new)
-    output$gap_overall    <- renderText(kpi_data()$median_gap_overall)
+    # --- KPI Card Outputs ---
+    # 1. Revenue Tab  
+    revenue_category <- list(
+      get_overall = function() kpis_static(),
+      get_subset  = function() kpis_subset(),
+      icon        = bsicons::bs_icon("cash"),
+      bullets     = list(
+        list(
+          type     = "value",
+          label    = "Total Revenue",
+          value_fn = function(k) format_kpi_value(k$revenue_kpis$total_revenue, "dollar"),
+          tooltip  = "Aggregate across entire date range"
+        ),
+        list(
+          type     = "list",
+          label    = "Top 3 Markets",
+          list_fn  = function(k) {
+            tbl <- k$topn$topn_billingcountry$revenue
+            tbl <- dplyr::slice_head(tbl, n = 3)
+            labels <- tbl$group_val
+            values <- tbl$revenue_fmt
+            build_kpi_list_html(labels, values, ordered = TRUE)
+          },
+          tooltip = "Markets with highest revenue contribution"
+        ),
+        list(
+          type = "value",
+          label    = "Top Genre",
+          value_fn = function(k) {
+            top <- k$topn$topn_genre$revenue[1, ]
+            glue::glue("{top$group_val} ({top$revenue_fmt})")
+          },
+          tooltip = "Genre with highest total revenue"
+        ),
+        list(
+          type = "value",
+          label    = "Top Artist",
+          value_fn = function(k) {
+            top <- k$topn$topn_artist$revenue[1, ]
+            glue::glue("{top$group_val} ({top$revenue_fmt})")
+          },
+          tooltip = "Artist with highest total revenue"
+        )
+      )
+    )
     
-    output$gap_window     <- renderText(kpi_data()$avg_gap_window)
-    output$gap_bounded    <- renderText(kpi_data()$avg_gap_bounded)
+    kpi_categories <- list(
+      Revenue = revenue_category
+    )
     
-    output$cohort_3 <- renderText(paste(
-      kpi_data()$top_cohort_month_3,
-      "(", kpi_data()$top_cohort_retention_3, ")"
-    ))
+    output$revenue_cards <- shiny::renderUI({
+      generate_insights_kpi_cards_ui(
+        cfg    = revenue_category,
+        styles = styles()
+      )
+    })
     
-    output$cohort_6 <- renderText(paste(
-      kpi_data()$top_cohort_month_6,
-      "(", kpi_data()$top_cohort_retention_6, ")"
-    ))
     
-    output$cohort_9 <- renderText(paste(
-      kpi_data()$top_cohort_month_9,
-      "(", kpi_data()$top_cohort_retention_9, ")"
-    ))
+
   })
 }

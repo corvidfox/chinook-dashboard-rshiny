@@ -22,7 +22,7 @@ bslib::page_fluid(
   # Static CSS
   tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
   # Theme-aware CSS injection (from server-side renderUI)
-  uiOutput("dynamic_styles"),
+  shiny::uiOutput("dynamic_styles"),
   
   # Sticky dashboard title with dark mode toggle
   shiny::tagList(
@@ -138,8 +138,7 @@ bslib::page_fluid(
       bslib::nav_panel("Performance by Genre", group_ui("genre")),
       bslib::nav_panel("Performance by Artist", group_ui("artist")),
       bslib::nav_panel("Customer Retention", retention_ui("retention")),
-      bslib::nav_panel("Key Insights", "Coming Soon." 
-      #                  #insights_ui("insights")
+      bslib::nav_panel("Key Insights", insights_ui("insights")
       )
     )
   )
