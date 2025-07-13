@@ -1,3 +1,32 @@
+#' @file insights_server.R
+#' @title Insights Module Server Logic
+#'
+#' Server-side rendering for the Insights dashboard panel. This module 
+#' displays pre-aggregated Group-level KPIs comparing data-set-wide values
+#' to subsets from filters.
+#'
+#' Built to support modular Shiny layouts with reactive filters,
+#' theming support, and cache-aware data inputs.
+#'
+#' Relies on shared helpers from \code{insights_helpers.R}, \code{stylers.R}, 
+#' and \code{server_utils.R}.
+#'
+#' @keywords internal module server dashboard insights chinook
+
+#' Mount Server Logic for Key Insights Panels
+#'
+#' Registers outputs for KPI cards for Insights panel
+#'
+#' @param id Module ID string.
+#' @param kpis_static Reactive expression with static KPIs over the entire 
+#'   data set.
+#' @param kpis_subset Reactive expression with shared KPI values for subsetted 
+#'   data.
+#' @param styles Reactive style list for light/dark themes.
+#'
+#' @return Adds outputs to the module environment.
+#' @export
+
 insights_server <- function(id, kpis_static, kpis_subset, styles) {
   moduleServer(id, function(input, output, session) {
 
