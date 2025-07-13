@@ -1,0 +1,17 @@
+Package: chinookDashboard
+Title: SQL-Driven Business Intelligence Dashboard (Chinook ‘Digital Music Store’)
+Version: 0.1.0
+Author: Morrigan Mahady (anmorrigan@proton.me)
+Maintainer: Morrigan Mahady (anmorrigan@proton.me)
+Description: 
+  This Shiny dashboard uses SQL-powered KPIs and reactive visualizations to explore 
+  purchasing behavior, customer retention, and regional revenue trends for the Chinook 
+  digital music store dataset. Designed by a healthcare researcher and analyst, this 
+  app emphasizes scalable ETL logic, modular architecture, and storytelling. It features 
+  light/dark theming, dynamic filtering, optimized caching, and executive-style summaries, 
+  all built on a compact codebase ready for production-level datasets.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/corvidfox/chinook-dashboard-rshiny
+BugReports: https://github.com/corvidfox/chinook-dashboard-rshiny/issues
