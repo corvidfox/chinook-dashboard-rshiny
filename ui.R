@@ -110,7 +110,7 @@ bslib::page_fluid(
             a(
               "Portfolio Post", 
               href = paste0(
-                "https://corvidfox.github.io/projects/2025_bi_chinook.html"
+                "https://corvidfox.github.io/projects/posts/2025_bi_chinook.html"
               ), 
               target = "_blank")
           ),
