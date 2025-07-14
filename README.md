@@ -37,7 +37,7 @@ Designed as a compact but scalable demonstration of real-world business analytic
 
 I'm a healthcare researcher and bioinformatician with a background in epigenomics and nursing, transitioning into data-focused roles across industries. This portfolio piece is aimed at demonstrating storytelling, ETL logic, dashboard engineering, and analyst workflows.
 
-See my personal porfolio site and browse more projects at [CorvidFox.github.io](Corvidfox.github.io)!
+See my personal porfolio site and browse more projects at [CorvidFox.github.io](https://corvidfox.github.io/)!
 
 ---
 
