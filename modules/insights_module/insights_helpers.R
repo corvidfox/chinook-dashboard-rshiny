@@ -36,14 +36,14 @@
 #'
 #' @return A \code{safe_kpi_card()} UI component.
 #' @export
-make_insights_kpi_card <- function(kpi_values, cfg, label, styles) {
+make_insights_kpi_card <- function(kpi_values, cfg, label, icon, styles) {
   # If KPI values are invalid or missing, return fallback card
   if (!is.list(kpi_values) || length(kpi_values) == 0) {
     return(
       safe_kpi_card(
         kpis    = list(),
         title   = label,
-        icon    = cfg$icon,
+        icon    = icon,
         tooltip = paste0(label, " metrics (no data)"),
         styles  = styles,
         body_fn = function() {
@@ -76,7 +76,7 @@ make_insights_kpi_card <- function(kpi_values, cfg, label, styles) {
   safe_kpi_card(
     kpis    = kpi_values,
     title   = label,
-    icon    = cfg$icon,
+    icon    = icon,
     tooltip = paste0(label, " metrics"),
     styles  = styles,
     body_fn = function() bullets
@@ -109,7 +109,11 @@ generate_insights_kpi_cards_ui <- function(cfg, styles) {
     min_width = 200,
     gap       = "1rem",
     fill      = TRUE,
-    make_insights_kpi_card(all_kpis,    cfg, "All Data",     styles),
-    make_insights_kpi_card(subset_kpis, cfg, "Filtered View", styles)
+    make_insights_kpi_card(
+      all_kpis, cfg, "All Data", bsicons::bs_icon("arrows-fullscreen"), styles
+      ),
+    make_insights_kpi_card(
+      subset_kpis, cfg, "Filtered View", bsicons::bs_icon("subtract"), styles
+      )
   )
 }
