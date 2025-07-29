@@ -65,10 +65,21 @@ get_events_shared <- function(con, where_clause) {
 #'
 #' @param con DBI connection
 #' @param tbl Name of filtered invoice temp table
+#' @param date_range Optional Date vector (length 2). Defaults to full
+#'   global range if `NULL`.
 #'
 #' @return Named list of counts for genres, artists, countries
-get_subset_metadata_kpis <- function(con, tbl) {
+get_subset_metadata_kpis <- function(con, tbl, date_range) {
   stopifnot(!is.null(con), DBI::dbIsValid(con))
+  
+  if (is.null(date_range)) {
+    if (exists("min_date", inherits = TRUE) &&
+        exists("min_date", inherits = TRUE)) {
+      date_range <- c(min_date, max_date)
+    }
+  }
+  
+  join_clause <- apply_date_filter(date_range, con)
   
   query <- glue::glue_sql(
     "
@@ -77,7 +88,7 @@ get_subset_metadata_kpis <- function(con, tbl) {
       COUNT(DISTINCT ar.Name) AS num_artist,
       COUNT(DISTINCT i.BillingCountry) AS num_billingcountry
     FROM {`tbl`} e
-    JOIN Invoice i ON i.InvoiceId = e.InvoiceId
+    {join_clause}
     JOIN InvoiceLine il ON il.InvoiceId = e.InvoiceId
     JOIN Track t ON il.TrackId = t.TrackId
     JOIN Genre g ON t.GenreId = g.GenreId
@@ -572,6 +583,20 @@ get_retention_kpis <- function(con,
   
   log_msg(glue::glue("Loaded {nrow(cust_df)} customers with in-window data"))
   
+  # Limited-use helper
+  month_diff <- function(start, end) {
+    start <- as.Date(start)
+    end <- as.Date(end)
+    
+    start_ym <- lubridate::year(start) * 12 + lubridate::month(start)
+    end_ym   <- lubridate::year(end) * 12 + lubridate::month(end)
+    
+    diff <- end_ym - start_ym
+    diff[is.na(start) | is.na(end)] <- NA_real_
+    
+    return(diff)
+  }
+  
   # Derived metrics in R
   cust_df <- cust_df |>
     dplyr::mutate(
@@ -583,19 +608,18 @@ get_retention_kpis <- function(con,
       repeat_window = num_in_window > 1,
       lifespan_mo_total = dplyr::if_else(
         total_purchases > 1,
-        lubridate::interval(first_date, last_date) /
-          months(1),
+        month_diff(first_date, last_date),
         NA_real_
       ),
       lifespan_mo_window = dplyr::case_when(
         !is.na(last_before_window) & !is.na(first_after_window) ~
-          lubridate::interval(start_date, end_date) / months(1),
+          month_diff(start_date, end_date),
         is.na(last_before_window) ~
-          lubridate::interval(first_in_window, end_date) / months(1),
+          month_diff(first_in_window, end_date),
         is.na(first_after_window) ~
-          lubridate::interval(start_date, last_in_window) / months(1),
+          month_diff(start_date, last_in_window),
         num_in_window == 1 ~ NA_real_,
-        TRUE ~ lubridate::interval(first_in_window, last_in_window) / months(1)
+        TRUE ~ month_diff(first_in_window, last_in_window)
       ),
       # Gaps in days, only when valid
       gap_life    = dplyr::if_else(total_purchases > 1, as.numeric(

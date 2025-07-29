@@ -82,7 +82,7 @@ get_shared_kpis <- function(con,
   if (is.null(purchase_kpis))
     return(NULL)
   
-  metadata_kpis <- get_subset_metadata_kpis(con, tbl)
+  metadata_kpis <- get_subset_metadata_kpis(con, tbl, date_range)
   
   log_msg("   ✔ Retrieved core KPI blocks")
   
