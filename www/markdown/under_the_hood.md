@@ -6,8 +6,10 @@ This dashboard was built to simulate a scalable business intelligence workflow u
 
 - **Source:** A static DuckDB database hosted on GitHub in read-only mode.
 - **ETL Logic:** SQL queries use joins, CTEs, and window functions to compute KPIs like revenue, customer retention, and genre performance.
-- **Filters:** All filters (date range, genre, artist, country, metric) are reactive and validated. No selection defaults to the full dataset.
-- **Staging Strategy:** Temp tables (e.g. `filtered_invoices`) are generated with applied filters for genre, artist, and country — allowing downstream queries and joins to operate on a reduced search space.
+- **Filter Validation:** All filters (date range, genre, artist, country, metric) are reactive and validated. No selection defaults to the full dataset.
+- **Filter Staging:**  
+  - Services in `services/sql_filters.py` build a temporary `filtered_invoices` table (filtered by genre, artist, country but not date) to shrink downstream query scopes.  
+  - A date-range filter is applied later in each query to preserve temporal integrity.  
 - **Catalog Mapping:** A pre-joined reference table of the full genre/artist catalog is used to annotate filtered results with metadata like track counts and artist scope.
 - **Optimization:** Filters are debounced and cached where appropriate to reduce recomputation and improve responsiveness.
 
