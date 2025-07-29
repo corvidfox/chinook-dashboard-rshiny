@@ -214,7 +214,14 @@ style_ggplot2 <- function(ggplot_plot, styles, axes_labs = NULL) {
       axis.title = ggplot2::element_text(color = s$text_color),
       legend.text = ggplot2::element_text(color = s$text_color),
       legend.title = ggplot2::element_text(color = s$text_color),
-      title = ggplot2::element_text(color = s$text_color)
+      plot.title = ggplot2::element_text(
+        hjust=0.5, 
+        color = s$text_color
+        ),
+      title = ggplot2::element_text(
+        hjust=0.5, 
+        color = s$text_color
+      )
     )
   
   # Optional axis/plot title override
