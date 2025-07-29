@@ -159,6 +159,7 @@ get_customer_kpis <- function(con, tbl, date_range = NULL) {
       SELECT DISTINCT e.CustomerId, DATE(i.InvoiceDate) AS dt
       FROM {`tbl`} e
       JOIN Invoice i ON i.InvoiceId = e.InvoiceId
+      WHERE dt BETWEEN DATE({date_range[1]}) AND DATE({date_range[2]})
     )
     SELECT
       COUNT(DISTINCT current_customers.CustomerId) AS total_customers,
