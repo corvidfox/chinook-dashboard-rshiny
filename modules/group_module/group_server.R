@@ -189,7 +189,7 @@ group_server <- function(id,
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
       filename = function()
-        glue::glue("chinook_{ns}_{Sys.Date()}.csv"),
+        glue::glue("chinook_{id}_{Sys.Date()}.csv"),
       content = function(file)
         write.csv(group_df(), file, row.names = FALSE)
     )

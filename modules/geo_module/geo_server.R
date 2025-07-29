@@ -196,7 +196,7 @@ geo_server <- function(
 
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
-      filename = function() paste0("chinook_{ns}_", Sys.Date(), ".csv"),
+      filename = function() glue::glue("chinook_{id}_{Sys.Date()}.csv"),
       content = function(file) write.csv(geo_yearly(), file, row.names = FALSE)
     )
     

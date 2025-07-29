@@ -160,7 +160,7 @@ ts_server <- function(id,
     # --- CSV Download for Raw Transaction Records ---
     output$download_csv <- shiny::downloadHandler(
       filename = function()
-        paste0("chinook_{ns}_", Sys.Date(), ".csv"),
+        glue::glue("chinook_{id}_{Sys.Date()}.csv"),
       content = function(file)
         write.csv(ts_df(), file, row.names = FALSE)
     )
