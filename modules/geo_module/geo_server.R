@@ -99,7 +99,7 @@ geo_server <- function(
         }, 
         title = "Top Countries",
         icon = bsicons::bs_icon("trophy-fill"),
-        tooltip = glue::glue("Top {nrow(geo_kpis()[[metric()$var_name]])} countries, by the chosen metric."),
+        tooltip = glue::glue("Top {nrow(geo_kpis()[[metric()$var_name]])} countries by the chosen metric."),
         styles = styles()
       )
     })
@@ -119,13 +119,13 @@ geo_server <- function(
                 values = k$revenue_share_fmt,
                 ordered = TRUE
               ),
-              tooltip = "Revenue (% of total revenue)."
+              tooltip = "Revenue and percentage of total revenue."
             )
           )
         },
-        title = "Revenue Share",
+        title = "Revenue (% Share)",
         icon = bsicons::bs_icon("pie-chart-fill"),
-        tooltip = "Revenue and percentage of total revenue (USD$).",
+        tooltip = "Revenue and percentage of total revenue.",
         styles = styles()
       )
     })
@@ -139,24 +139,22 @@ geo_server <- function(
           
           list(
             build_kpi(
-              label = "Customers",  
+              label = "Customers (Avg Revenue Per)",  
               value = build_kpi_list_html(
                 labels = k$num_customers_fmt,
                 values = k$avg_revenue_per_cust_fmt,
                 ordered = TRUE
               ),
               tooltip = paste0(
-                "Total number of customers ",
-                "(average revenue per customer, USD$)."
+                "Customer count and average revenue per customer."
               )
             )
           )
         },
-        title = "Customers (N, Avg$)",
+        title = "Customers (Avg Revenue Per)",
         icon = bsicons::bs_icon("people-fill"),
         tooltip = paste0(
-          "Total number of customers and average",
-          " revenue per customer (USD$)."
+          "Customer count and average revenue per customer."
         ),
         styles = styles()
       )

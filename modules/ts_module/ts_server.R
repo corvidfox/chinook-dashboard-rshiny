@@ -68,7 +68,7 @@ ts_server <- function(id,
         },
         title = "Revenue",
         icon = bsicons::bs_icon("currency-dollar"),
-        tooltip = "Gross revenue, in US dollars.",
+        tooltip = "Gross revenue, US dollars.",
         styles = styles()
       )
     })
@@ -83,12 +83,12 @@ ts_server <- function(id,
             safe_kpi_entry(
               "Purchases",
               k$total_purchases,
-              "Total number of unique purchases."
+              "Total number of unique purchase events."
             ),
             safe_kpi_entry(
               "Tracks Sold",
               k$total_tracks,
-              "Total number of tracks sold (unit sales volume)."
+              "Total unit sales."
             ),
             safe_kpi_entry(
               "Avg $ / Purchase",
@@ -111,17 +111,21 @@ ts_server <- function(id,
         body_fn = function() {
           k <- ts_kpis()
           list(
-            safe_kpi_entry("Total", k$total_customers, "Total unique customers."),
+            safe_kpi_entry(
+              "Total", 
+              k$total_customers, 
+              "Total unique customers."
+            ),
             safe_kpi_entry(
               "First-Time",
               k$first_time_pct,
-              "(%)Number of first time customers."
+              "(%) First-time customers."
             )
           )
         },
         title = "Customers",
         icon = bsicons::bs_icon("people-fill"),
-        tooltip = "Customers that made a purchase.",
+        tooltip = "Customer overview.",
         styles = styles()
       )
     })

@@ -92,7 +92,7 @@ group_server <- function(id,
         title = glue::glue("Top {group_label}"),
         icon = bsicons::bs_icon("trophy-fill"),
         tooltip = glue::glue(
-          "Top {nrow(group_kpis()[[metric()$var_name]])} {group_label}, by the chosen metric."
+          "Top {nrow(group_kpis()[[metric()$var_name]])} {group_label} by the chosen metric."
         ),
         styles = styles()
       )
@@ -113,13 +113,13 @@ group_server <- function(id,
                 values = k$revenue_share_fmt,
                 ordered = TRUE
               ),
-              tooltip = "Revenue (% of total revenue)."
+              tooltip = "Revenue and percentage of total revenue."
             )
           )
         },
-        title = "Revenue Share",
+        title = "Revenue (% Share)",
         icon = bsicons::bs_icon("pie-chart-fill"),
-        tooltip = "Revenue and percentage of total revenue (USD$).",
+        tooltip = "Revenue and percentage of total revenue.",
         styles = styles()
       )
     })
@@ -133,19 +133,19 @@ group_server <- function(id,
           # Body Items for KPI
           list(
             build_kpi(
-              label = "Tracks (% of Catalog Sold)",
+              label = "Total tracks in catalog and % catalog sold.",
               value = build_kpi_list_html(
                 labels = k$catalog_size_fmt,
                 values = k$pct_catalog_sold_fmt,
                 ordered = TRUE
               ),
-              tooltip = paste0("Total tracks in catalog ", "(% of catalog sold).")
+              tooltip = paste0("Total tracks in catalog and % catalog sold.")
             )
           )
         },
-        title = "Catalog",
+        title = "Catalog Size (% Sold)",
         icon = bsicons::bs_icon("disc-fill"),
-        tooltip = paste0("Total tracks and percentage of catalog sold."),
+        tooltip = paste0("Total tracks in catalog and % catalog sold."),
         styles = styles()
       )
     })

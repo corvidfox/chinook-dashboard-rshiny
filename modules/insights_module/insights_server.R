@@ -43,11 +43,11 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           type     = "value",
           label    = "Total Revenue",
           value_fn = function(k) format_kpi_value(k$revenue_kpis$total_revenue, "dollar"),
-          tooltip  = "Aggregate across entire date range"
+          tooltip  = "Total revenue in the data set."
         ),
         list(
           type     = "list",
-          label    = "Top 3 Markets",
+          label    = "Top Markets",
           list_fn  = function(k) {
             tbl <- k$topn$topn_billingcountry$revenue
             tbl <- dplyr::slice_head(tbl, n = 3)
@@ -55,7 +55,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
             values <- tbl$revenue_fmt
             build_kpi_list_html(labels, values, ordered = TRUE)
           },
-          tooltip = "Markets with highest revenue contribution"
+          tooltip = "Top revenue-producing countries, sorted by revenue."
         ),
         list(
           type = "value",
@@ -64,7 +64,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
             top <- k$topn$topn_genre$revenue[1, ]
             glue::glue("{top$group_val} ({top$revenue_fmt})")
           },
-          tooltip = "Genre with highest total revenue"
+          tooltip = "Highest-grossing genre in the data set."
         ),
         list(
           type = "value",
@@ -73,7 +73,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
             top <- k$topn$topn_artist$revenue[1, ]
             glue::glue("{top$group_val} ({top$revenue_fmt})")
           },
-          tooltip = "Artist with highest total revenue"
+          tooltip = "Highest-grossing artist in the data set"
         )
       )
     )
@@ -89,7 +89,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$purchase_kpis$total_orders, "number")
           },
-          tooltip  = "Number of purchases (invoices) in range"
+          tooltip  = "Total number of purchases (invoices) in the data set."
         ),
         list(
           type     = "value",
@@ -97,7 +97,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$purchase_kpis$avg_rev_per_order, "dollar")
           },
-          tooltip  = "Average income per invoice"
+          tooltip  = "Average revenue per invoice."
         ),
         list(
           type     = "value",
@@ -105,7 +105,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$purchase_kpis$total_tracks, "number")
           },
-          tooltip  = "Number of individual tracks purchased"
+          tooltip  = "Total umber of individual units (tracks) sold in the data set."
         ),
         list(
           type     = "value",
@@ -113,7 +113,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$purchase_kpis$avg_tracks_per_order, "float")
           },
-          tooltip  = "Average track count per invoice"
+          tooltip  = "Average track count per invoice."
         )
       )
     )
@@ -131,7 +131,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$customer_kpis$total_customers, "number")
           },
-          tooltip  = "Number of customers active in date range"
+          tooltip  = "Number of active customers in the data set."
         ),
         list(
           type     = "value",
@@ -139,18 +139,18 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
           value_fn = function(k) {
             format_kpi_value(k$customer_kpis$pct_new_customers, "percent")
           },
-          tooltip  = "Customers with first purchase in date range"
+          tooltip  = "Proportion of new active customers in the data set."
         ),
         list(
           type     = "value",
-          label    = "Revenue per Customer",
+          label    = "Avg Revenue per Customer",
           value_fn = function(k) {
             total <- k$revenue_kpis$total_revenue
             n     <- k$customer_kpis$total_customers
             if (is.null(total) || is.null(n) || n == 0) return("—")
             format_kpi_value(total / n, "dollar")
           },
-          tooltip  = "Average revenue per active customer"
+          tooltip  = "Average revenue per active customer in the data set."
         ),
         list(
           type     = "value",
@@ -160,7 +160,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
             rate   <- k$retention_kpis$top_cohort_retention_3
             glue::glue("{cohort} ({rate})")
           },
-          tooltip  = "Best-performing 3-month cohort"
+          tooltip  = "Best-performing cohort at 3-months since first purchase."
         ),
         list(
           type     = "value",
@@ -170,7 +170,7 @@ insights_server <- function(id, kpis_static, kpis_subset, styles) {
             rate   <- k$retention_kpis$top_cohort_retention_6
             glue::glue("{cohort} ({rate})")
           },
-          tooltip  = "Best-performing 6-month cohort"
+          tooltip  = "Best-performing cohort at 6-months since first purchase."
         )
       )
     )

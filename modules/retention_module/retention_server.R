@@ -73,7 +73,7 @@ retention_server <- function(id,
             build_kpi(
               "Total Customers (% New)",
               glue::glue("{k$num_cust} ({k$pct_new})"),
-              "Total customers active in subset (% of that are new)."
+              "Total customers active in subset, and % of which are new."
             ),
             build_kpi(
               "Avg Lifespan (Full, Months)",
@@ -83,7 +83,7 @@ retention_server <- function(id,
             build_kpi(
               "Avg Lifespan (Subset, Months)",
               k$avg_life_mo_win,
-              "Average time active in the current date range, in months."
+              "Average time active in the current data set, in months."
             )
           )
         },
@@ -104,19 +104,22 @@ retention_server <- function(id,
             build_kpi(
               "Lifetime",
               glue::glue("{k$ret_n_any} ({k$ret_rate_any})"),
-              paste0("Number of and % of repeat customers (lifetime repeat).")
+              paste0("Number and % of repeat customers (lifetime).")
             ),
             build_kpi(
               "Returning",
               glue::glue("{k$ret_n_return} ({k$ret_rate_return})"),
-              "Number and % of returning repeat customers in the subset."
+              paste0(
+                "Number and % of returning repeat customers in the current ",
+                "data subset."
+              )
             ),
             build_kpi(
               "New → Repeat Rate",
               glue::glue("{k$ret_n_conv} ({k$ret_rate_conv})"),
               paste0(
-                "Number and % of new customers in the subset that ",
-                "became repeating customers."
+                "Number and % of new customers in the current data subset ",
+                " who became repeating customers."
               )
             ),
             build_kpi(
@@ -124,7 +127,7 @@ retention_server <- function(id,
               k$med_gap_life,
               paste0(
                 "Median days between first and second purchase",
-                " in customer lifetime."
+                " in customer lifetime, days."
               )
             )
           )
@@ -146,15 +149,18 @@ retention_server <- function(id,
             build_kpi(
               "Avg Gap (Subset, Days)",
               k$avg_gap_window,
-              "Average days between purchases in subset."
+              paste0(
+                "Average gap between purchases in the current data subset,",
+                " in days."
+              )
             ),
             build_kpi(
               "Avg Gap (Bounded, Days)",
               k$avg_gap_bound,
               paste0(
-                "Average days between purchases, ",
-                "including the most recent purchase before and/or",
-                " after the subset date range."
+                "Average gap between purchases including the most recent ",
+                "purchases before and/or after the current subset range, ",
+                "in days."
               )
             ),
             build_kpi(
@@ -162,21 +168,21 @@ retention_server <- function(id,
               glue::glue(
                 "{k$top_cohort_month_3} ({k$top_cohort_retention_3})"
               ),
-              tooltip = "Best 3-month retention cohort, and retention rate."
+              tooltip = "Best 3-month retention cohort and retention rate."
             ),
             build_kpi(
               "Top Cohort (6mo)",
               glue::glue(
                 "{k$top_cohort_month_6} ({k$top_cohort_retention_6})"
               ),
-              tooltip = "Best 6-month retention cohort, and retention rate."
+              tooltip = "Best 6-month retention cohort and retention rate."
             ),
             build_kpi(
               "Top Cohort (9mo)",
               glue::glue(
                 "{k$top_cohort_month_9} ({k$top_cohort_retention_9})"
               ),
-              tooltip = "Best 9-month retention cohort, and retention rate."
+              tooltip = "Best 9-month retention cohort and retention rate."
             )
           )
         },
