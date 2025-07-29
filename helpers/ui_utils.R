@@ -38,7 +38,12 @@ render_data_card <- function(
   bslib::card(
     full_screen = FALSE,
     bslib::card_header(title),
-    bslib::card_body(DT::dataTableOutput(ns(table_id))),
+    bslib::card_body(
+      div(
+        class = "pagination-wrapper",
+        DT::dataTableOutput(ns(table_id))
+        )
+    ),
     div(
       style = "text-align: center;",
       shiny::uiOutput(ns(download_ui_id))

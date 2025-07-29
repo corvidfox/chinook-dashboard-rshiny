@@ -143,5 +143,6 @@ bslib::page_fluid(
       bslib::nav_panel("Customer Retention", retention_ui("retention")),
       bslib::nav_panel("Key Insights", insights_ui("insights"))
     )
-  )
+  ),
+  tags$script(src = "center-pagination.js")
 )

@@ -1,38 +1,35 @@
 /* www/styles.css */
 
 /* Sticky Title Bar */
-.sticky-header {{
+.sticky-header {
   position: sticky;
   top: 0;
   z-index: 1000;
   transition: background-color 0.4s ease, color 0.4s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}}
+}
     
 /* Styler for transition between themes */  
-.html, .body {{
+.html, .body {
   transition: background-color 0.5s ease, color 0.5s ease;
-}}  
+}  
 
-.theme-transition, .theme-transition * {{
+.theme-transition, .theme-transition * {
   transition: 
   background-color 0.4s ease,
   color 0.4s ease,
   border-color 0.4s ease,
   box-shadow 0.4s ease;
-}}
+}
 
 /* Center & Compact Data Table Pagination */
-.dataTables_wrapper .dataTables_paginate {{
+.pagination-wrapper .dataTables_wrapper .dataTables_paginate ul.pagination {
   display: flex !important;
   justify-content: center !important;
   width: 100% !important;
-}}
-
-.dataTables_wrapper .dataTables_paginate .pagination {{
   margin: 0 auto !important;
-}}
-
+  padding: 0 !important;
+}
 
 /* Download button size and transition */
 .download-btn {
@@ -45,24 +42,24 @@
 }
 
 /* Responsive KPI Boxes */
-.bslib-column-wrap > * {{
+.bslib-column-wrap > * {
   flex: 1 1 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-}}
+}
 
-.bslib-card {{
+.bslib-card {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}}
+}
 
-.bslib-card:hover {{
+.bslib-card:hover {
   box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   transition: box-shadow 0.3s ease-in-out;
-}}
+}
 
 /* Smooth animated transitions */
 
