@@ -100,7 +100,7 @@ get_shared_kpis <- function(con,
     
     # Enrich with catalog coverage for Genre/Artist only
     if (group %in% c("Genre", "Artist")) {
-      full_kpis <- enrich_catalog_kpis(con, tbl, full_kpis, group)
+      full_kpis <- enrich_catalog_kpis(con, tbl, full_kpis, group, date_range)
     }
     
     # Slice top-N tables for each metric & format for display

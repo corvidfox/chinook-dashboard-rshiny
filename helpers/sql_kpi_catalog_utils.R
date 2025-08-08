@@ -15,12 +15,15 @@
 #' @param con DBI connection to DuckDB
 #' @param tbl Filtered invoice table name
 #' @param group_var Either "Genre" or "Artist"
+#' @param date_range Character vector of length 2.
 #'
 #' @return A data.frame with group_val, catalog_size, and pct_catalog_sold
-query_catalog_sales <- function(con, tbl, group_var = "Genre") {
+query_catalog_sales <- function(con, tbl, group_var = "Genre", date_range) {
   stopifnot(!is.null(con), DBI::dbIsValid(con))
   
   group_var <- rlang::arg_match(group_var, c("Genre", "Artist"))
+  
+  date_clause <- apply_date_filter(date_range = date_range, .con = con)
   
   join_clause <- switch(
     group_var,
@@ -50,10 +53,11 @@ query_catalog_sales <- function(con, tbl, group_var = "Genre") {
   query <- glue::glue_sql("
     SELECT {DBI::SQL(group_field)} AS group_val,
            COUNT(DISTINCT il.TrackId) AS unique_tracks_sold,
-           ANY_VALUE({DBI::SQL(catalog_field)}) AS catalog_size,
+           MAX({DBI::SQL(catalog_field)}) AS catalog_size,
            COUNT(DISTINCT il.TrackId) * 1.0 /
-             ANY_VALUE({DBI::SQL(catalog_field)}) AS pct_catalog_sold
+             MAX({DBI::SQL(catalog_field)}) AS pct_catalog_sold
     FROM {`tbl`} e
+    {date_clause}
     JOIN InvoiceLine il ON il.InvoiceId = e.InvoiceId
     {DBI::SQL(join_clause)}
     GROUP BY group_val
@@ -68,8 +72,9 @@ query_catalog_sales <- function(con, tbl, group_var = "Genre") {
 #' @param tbl filtered invoice temp table
 #' @param topn_df TopN augmented data.frame (genre or artist)
 #' @param group_var either 'Genre' or 'Artist'
-enrich_catalog_kpis <- function(con, tbl, topn_df, group_var) {
-  catalog_sales <- query_catalog_sales(con, tbl, group_var)
+#' @param date_range Character vector of length 2.
+enrich_catalog_kpis <- function(con, tbl, topn_df, group_var, date_range) {
+  catalog_sales <- query_catalog_sales(con, tbl, group_var, date_range)
   top_groups <- topn_df$group_val
   catalog_sales_subset <- dplyr::filter(catalog_sales, group_val %in% top_groups)
   dplyr::left_join(topn_df, catalog_sales_subset, by = "group_val")
