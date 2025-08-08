@@ -79,7 +79,9 @@ get_ts_monthly_summary <- function(con, date_range) {
       COUNT(DISTINCT CustomerId) AS num_customers,
       SUM(Quantity) AS tracks_sold,
       SUM(UnitPrice * Quantity) AS revenue,
-      SUM(first_time_flag) AS first_time_customers
+      COUNT(DISTINCT 
+        CASE WHEN first_time_flag = 1 THEN CustomerId 
+        END) AS first_time_customers
     FROM invoice_expanded
     GROUP BY month
     ORDER BY month;
