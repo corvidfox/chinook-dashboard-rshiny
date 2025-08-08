@@ -155,6 +155,11 @@ generate_css <- function(theme) {
   )
   
   glue::glue("
+  /* Sticky Header */
+  .sticky-header {{
+    background-color: {theme_vars[['body-bg']];
+  }}
+  
     /* Nav Tab Styling */
     .nav-tabs .nav-link {{
       color: {theme_vars[['body-color']]};
@@ -165,7 +170,7 @@ generate_css <- function(theme) {
 
     .nav-tabs .nav-link.active {{
       background-color: {theme_vars[['primary']]};
-      color: {theme_vars[['body-bg']]};
+      color: {theme_vars[['body-bg']]} !important;
       border-color: {theme_vars[['primary']]};
     }}
 
