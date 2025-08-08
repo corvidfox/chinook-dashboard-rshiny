@@ -187,6 +187,8 @@ group_plotter <- function(df, metric, group_var, group_label, styles, max_n){
   
   # Restrict to top `max_n` values of the group by total metric (for space)
   top_groups <- df %>%
+    dplyr::select(group_var, total_metric) %>%
+    dplyr::arrange(dplyr::desc(total_metric)) %>%
     dplyr::distinct(group_var) %>%
     dplyr::slice_head(n = min(nrow(.), max_n)) %>%
     dplyr::pull(group_var)
