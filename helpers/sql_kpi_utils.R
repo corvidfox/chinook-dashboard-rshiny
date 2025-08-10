@@ -398,6 +398,9 @@ get_retention_cohort_data <- function(con,
   ",
                                   .con = con)
   
+  # Use correct date column based on table
+  date_column <- if (tbl == "Invoice") "InvoiceDate" else "dt"
+  
   query <- glue::glue_sql(
     "
     WITH cohort_dates AS (
@@ -424,7 +427,7 @@ get_retention_cohort_data <- function(con,
       JOIN Invoice i ON fi.InvoiceId = i.InvoiceId
       JOIN cohort_dates c ON fi.CustomerId = c.CustomerId
       WHERE DATE_DIFF('month', c.cohort_month, i.InvoiceDate) >= 0
-        AND fi.dt BETWEEN DATE({date_range[1]}) AND DATE({date_range[2]})
+        AND fi.{DBI::SQL(date_column)} BETWEEN DATE({date_range[1]}) AND DATE({date_range[2]})
         {offset_clause}
     ),
     activity_counts AS (
