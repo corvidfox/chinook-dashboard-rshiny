@@ -61,6 +61,11 @@ test_that("generate_styles returns expected structure for light mode", {
 test_that("generate_styles returns expected structure for dark mode", {
   styles <- generate_styles("dark")
   
+  normalize_hex <- function(hex) {
+    rgb_vals <- grDevices::col2rgb(hex)
+    rgb(rgb_vals[1], rgb_vals[2], rgb_vals[3], maxColorValue = 255)
+  }
+  
   expect_type(styles, "list")
   expect_equal(normalize_hex(styles$background_color), "#222222")
   expect_equal(styles$font_size, 14)
