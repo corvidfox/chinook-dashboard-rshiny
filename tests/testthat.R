@@ -22,6 +22,17 @@ library(testthat)
 # Source `global.R` to establish the DuckDB connection
 source("global.R")
 
+# Set up required temporary tables
+create_catalog_tables(con)
+
+DBI::dbWriteTable(
+  con = con,
+  name = "filtered_invoices",
+  value = get_events_shared(con, DBI::SQL("")),
+  overwrite = TRUE,
+  temporary = TRUE
+)
+
 # -----------------------------------------------
 # Run all test files in the tests/testthat directory
 # -----------------------------------------------
