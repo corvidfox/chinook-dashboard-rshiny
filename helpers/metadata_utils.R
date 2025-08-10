@@ -196,4 +196,6 @@ check_catalog_tables <- function(con) {
   log_msg(
     cond = length(missing) == 0,
     msg = "[DATA META] ✅ Catalog tables present.")
+  
+  return(length(missing) == 0)
 }
