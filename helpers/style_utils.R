@@ -73,6 +73,11 @@ theme_dark <- bslib::bs_theme(
 generate_styles <- function(theme_mode = "light") {
   log_msg(glue::glue("[STYLER] Generating styles for {theme_mode} mode"))
   
+  # Only light and dark are currently supported
+  if (!(theme_mode %in% c("light", "dark"))) {
+    stop("Invalid theme mode")
+  }
+  
   current_theme <- if (identical(theme_mode, "dark")) theme_dark else theme_light
   
   theme_colors <- bslib::bs_get_variables(
@@ -97,6 +102,7 @@ generate_styles <- function(theme_mode = "light") {
     line_color        = primary_color,
     point_color       = secondary_color,
     text_color        = text_color,
+    background_color  = bg_color,
     font_size         = 14,
     line_size         = 0.75,
     point_size        = 1,
