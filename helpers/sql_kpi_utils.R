@@ -614,11 +614,11 @@ get_retention_kpis <- function(con,
       lifespan_mo_window = dplyr::case_when(
         !is.na(last_before_window) & !is.na(first_after_window) ~
           month_diff(start_date, end_date),
-        is.na(last_before_window) ~
+        is.na(last_before_window) & !is.na(first_after_window)~
           month_diff(first_in_window, end_date),
-        is.na(first_after_window) ~
+        is.na(first_after_window) & !is.na(last_before_window)~
           month_diff(start_date, last_in_window),
-        num_in_window == 1 ~ NA_real_,
+        num_in_window <= 1 ~ NA_real_,
         TRUE ~ month_diff(first_in_window, last_in_window)
       ),
       # Gaps in days, only when valid
