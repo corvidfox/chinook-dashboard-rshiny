@@ -51,7 +51,17 @@ test_that("check_catalog_tables returns TRUE when tables exist", {
 })
 
 test_that("check_catalog_tables returns FALSE when tables are missing", {
+  # Ensure tables exist before dropping
+  create_catalog_tables(con)
+
+  # Drop them for this test
+  withr::defer({
+    # Restore after test
+    create_catalog_tables(con)
+  })
+  
   DBI::dbExecute(con, "DROP TABLE IF EXISTS genre_catalog")
   DBI::dbExecute(con, "DROP TABLE IF EXISTS artist_catalog")
+  
   expect_false(check_catalog_tables(con))
 })
