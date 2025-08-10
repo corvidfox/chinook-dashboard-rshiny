@@ -75,6 +75,9 @@ get_retention_decay_data <- function(
     glue::glue_sql("", .con = con)
   }
   
+  # Use correct date column based on table
+  date_column <- if (tbl == "Invoice") "InvoiceDate" else "dt"
+  
   query <- glue::glue_sql("
     WITH cohorts AS (
       SELECT
@@ -94,7 +97,7 @@ get_retention_decay_data <- function(
       JOIN Invoice i ON i.InvoiceId = fi.InvoiceId
       JOIN cohorts c ON c.CustomerId = fi.CustomerId
       WHERE DATE_DIFF('month', c.cohort_start, i.InvoiceDate) >= 0
-        AND fi.dt BETWEEN DATE({date_range[1]}) AND DATE({date_range[2]})
+        AND fi.{DBI::SQL(date_column)} BETWEEN DATE({date_range[1]}) AND DATE({date_range[2]})
       {offset_clause}
     ),
     retention AS (
