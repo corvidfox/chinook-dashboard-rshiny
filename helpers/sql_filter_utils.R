@@ -48,7 +48,7 @@ form_where_clause <- function(
       lubridate::days(1)
     
     clauses$date <- glue::glue_sql(
-      "DATE(i.InvoiceDate) BETWEEN DATE({start_date}) AND DATE({end_date})",
+      "DATE(i.InvoiceDate) BETWEEN DATE({start_date*}) AND DATE({end_date*})",
       .con = .con
     )
   }
@@ -111,12 +111,12 @@ apply_date_filter <- function(date_range = NULL, .con = NULL) {
       lubridate::days(1)
     
     date_clause <- glue::glue_sql(
-      "DATE(i.InvoiceDate) BETWEEN DATE({start_date}) AND DATE({end_date})",
+      "DATE(i.InvoiceDate) BETWEEN DATE({start_date*}) AND DATE({end_date*})",
       .con = con
     )
     
     return(glue::glue_sql(
-      "JOIN Invoice i ON i.InvoiceId = e.InvoiceId AND {date_clause}",
+      "JOIN Invoice i ON i.InvoiceId = e.InvoiceId AND {date_clause*}",
       .con = con
     ))
   }
