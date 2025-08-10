@@ -124,4 +124,7 @@ metric_choices <- c(
 )
 
 # ---- Pull Last Commit (Update Date) ----
-last_commit <- readRDS("data/last_commit.rds")
+last_commit <- tryCatch(
+  readRDS("data/last_commit.rds"),
+  error = function(e) NA
+)
